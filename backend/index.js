@@ -1,29 +1,34 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+
 const app = express();
-const PORT = 3000;
+app.use(cors());
+app.use(express.json());
 
-// Tableau de citations
-const quotes = [
-  "Le code, c’est la poésie du XXIe siècle.",
-  "Apprendre, c’est réapprendre à chaque erreur.",
-  "Un bon développeur lit avant d’écrire.",
-  "La patience est le meilleur débogueur.",
-  "Code moins, mais mieux."
-];
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('✅ Connecté à MongoDB Atlas'))
+  .catch(err => console.error('❌ Erreur MongoDB:', err));
 
-// Route principale
-app.get('/', (req, res) => {
-  res.send('Bienvenue sur mon API de citations !');
+// 🧱 Schéma utilisateur
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  name: String,
+  age: Number
 });
 
-// Route API qui renvoie une citation aléatoire
-app.get('/api/quote', (req, res) => {
-  const random = quotes[Math.floor(Math.random() * quotes.length)];
-  res.json({ quote: random });
+// 🔧 Modèle
+const User = mongoose.model('User', userSchema);
+
+// 📋 GET - liste des utilisateurs
+app.get('/api/users', async (req, res) => {
+  const users = await User.find();
+  res.json(users);
 });
 
-// Démarrage du serveur
-app.listen(PORT, () => {
-  console.log(`✅ Serveur actif sur http://localhost:${PORT}`);
-});
+// 🚨 Pas de app.listen() ici
+// Vercel se charge de lancer l’application
+
+// On exporte notre application Express
+module.exports = app;
 
