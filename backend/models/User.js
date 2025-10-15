@@ -8,7 +8,9 @@ const userSchema = new mongoose.Schema({
   age: Number,
   gender: String,
   date_created: { type: Date, default: Date.now },
-  date_updated: { type: Date, default: Date.now }
+  date_updated: { type: Date, default: Date.now },
+  token: String,
+  token_expiration: Date,
 });
 
 // 🔧 Modèle
