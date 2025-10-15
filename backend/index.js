@@ -1,19 +1,29 @@
 const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+
 const app = express();
+app.use(cors());
+app.use(express.json());
 
-// Tableau de citations
-const quotes = [
-  "Le code, c’est la poésie du XXIe siècle.",
-  "Apprendre, c’est réapprendre à chaque erreur.",
-  "Un bon développeur lit avant d’écrire.",
-  "La patience est le meilleur débogueur.",
-  "Code moins, mais mieux."
-];
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('✅ Connecté à MongoDB Atlas'))
+  .catch(err => console.error('❌ Erreur MongoDB:', err));
 
-// Route API
-app.get('/api/quote', (req, res) => {
-  const random = quotes[Math.floor(Math.random() * quotes.length)];
-  res.json({ quote: random });
+// 🧱 Schéma utilisateur
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  name: String,
+  age: Number
+});
+
+// 🔧 Modèle
+const User = mongoose.model('User', userSchema);
+
+// 📋 GET - liste des utilisateurs
+app.get('/api/users', async (req, res) => {
+  const users = await User.find();
+  res.json(users);
 });
 
 // 🚨 Pas de app.listen() ici
