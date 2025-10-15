@@ -6,6 +6,8 @@ require('dotenv').config();
 // Import des routes
 const authRoutes = require('./api/routes/auth.routes');
 const userRoutes = require('./api/routes/user.routes');
+const postRoutes = require('./api/routes/post.routes');
+const commentRoutes = require('./api/routes/comment.routes');
 
 const app = express();
 
@@ -16,6 +18,8 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes);
+app.use('/api/comments', commentRoutes);
 
 // Route de test
 app.get('/', (req, res) => {

@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
   date_updated: { type: Date, default: Date.now },
   token: String,
   token_expiration: Date,
+  posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
 });
 
 // 🔧 Modèle
