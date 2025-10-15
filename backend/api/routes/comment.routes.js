@@ -2,6 +2,14 @@ const router = require('express').Router();
 const Comment = require('../../models/Comment.js');
 const Post = require('../../models/Post.js');
 
+router.get('/', async (req, res) => {
+    try {
+		const comments = await Comment.find();
+		res.json(comments);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
 // Route: POST /api/comments/ - Create a comment
 router.post('/', async (req, res) => {
 	try {
