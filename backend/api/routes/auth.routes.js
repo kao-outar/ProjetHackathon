@@ -1,12 +1,9 @@
 // ./api/routes/auth.routes.js
+import User from '../../models/User.js';
+
 const router = require('express').Router();
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-const mongoose = require('mongoose');
-
-// ⚠️ On récupère le modèle déjà déclaré dans index.js
-// Assure-toi que l'enregistrement du modèle a eu lieu AVANT d'importer cette route.
-const User = mongoose.model('User');
 
 // POST /api/auth/signup
 router.post('/signup', async (req, res) => {
