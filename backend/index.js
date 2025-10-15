@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-const PORT = 3000;
 
 // Tableau de citations
 const quotes = [
@@ -11,19 +10,15 @@ const quotes = [
   "Code moins, mais mieux."
 ];
 
-// Route principale
-app.get('/', (req, res) => {
-  res.send('Bienvenue sur mon API de citations !');
-});
-
-// Route API qui renvoie une citation aléatoire
+// Route API
 app.get('/api/quote', (req, res) => {
   const random = quotes[Math.floor(Math.random() * quotes.length)];
   res.json({ quote: random });
 });
 
-// Démarrage du serveur
-app.listen(PORT, () => {
-  console.log(`✅ Serveur actif sur http://localhost:${PORT}`);
-});
+// 🚨 Pas de app.listen() ici
+// Vercel se charge de lancer l’application
+
+// On exporte notre application Express
+module.exports = app;
 
