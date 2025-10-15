@@ -1,10 +1,9 @@
 const router = require('express').Router();
 const User = require('../../models/User.js');
 
-// GET /api/users - Récupérer tous les utilisateurs
 router.get('/', async (req, res) => {
   try {
-    const users = await User.find({}, { password: 0 }); // Exclure les mots de passe
+    const users = await User.find({}, { password: 0 });
     res.json({ users });
   } catch (err) {
     console.error('Erreur lors de la récupération des utilisateurs:', err);
@@ -12,7 +11,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/users/:uuid - Récupérer un utilisateur par UUID
 router.get('/:uuid', async (req, res) => {
   const { uuid } = req.params;
   try {
@@ -27,13 +25,11 @@ router.get('/:uuid', async (req, res) => {
   }
 });
 
-// PUT /api/users/:uuid - Mettre à jour un utilisateur
 router.put('/:uuid', async (req, res) => {
   const { uuid } = req.params;
   const { email, name, age, gender } = req.body; // Pas de password dans l'update
   
   try {
-    // Validation des données
     const updateData = {};
     if (email && /.+@.+\..+/.test(email)) {
       updateData.email = email.toLowerCase().trim();
