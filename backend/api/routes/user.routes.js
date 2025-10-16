@@ -5,7 +5,7 @@ const verifyToken = require('../../middleware/verifyToken');
 
 router.get('/', verifyToken, async (req, res) => {
   try {
-    const users = await User.find({}, { password: 0 });
+    const users = await User.find({}, { password: 0, token: 0, token_expiration: 0 });
     res.json({ users });
   } catch (err) {
     console.error('Erreur lors de la récupération des utilisateurs:', err);
@@ -16,7 +16,7 @@ router.get('/', verifyToken, async (req, res) => {
 router.get('/:id', verifyToken, async (req, res) => {
   const { id } = req.params;
   try {
-    const user = await User.findOne({ _id: id }, { password: 0 }); // Exclure le mot de passe
+    const user = await User.findOne({ _id: id }, { password: 0, token: 0, token_expiration: 0 }); // Exclure les champs sensibles
     if (!user) {
       return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
@@ -51,14 +51,14 @@ router.put('/:id', verifyToken, async (req, res) => {
     const updatedUser = await User.findOneAndUpdate(
       { _id: id },
       updateData,
-      { new: true, select: '-password' } // Exclure le mot de passe de la réponse
+      { new: true, select: '-password -token -token_expiration' } // Exclure les champs sensibles de la réponse
     );
     
     if (!updatedUser) {
       return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
     
-    res.json({ user: updatedUser });
+    res.json(updatedUser);
   } catch (err) {
     if (err?.code === 11000) {
       return res.status(409).json({ error: 'Email déjà utilisé' });

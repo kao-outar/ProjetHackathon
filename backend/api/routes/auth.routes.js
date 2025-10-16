@@ -44,6 +44,7 @@ router.post('/signup', async (req, res) => {
     });
 
     return res.status(201).json({
+      message: 'Utilisateur créé avec succès',
       user: {
         id: user._id,
         email: user.email,
@@ -143,6 +144,10 @@ router.post('/signout', async (req, res) => {
       return res.status(404).json({ error: 'user_not_found' });
     }
 
+    if (!user.token) {
+      return res.status(401).json({ error: 'invalid_token' });
+    }
+
     const isValidToken = await bcrypt.compare(clientToken, user.token);
     if (!isValidToken) {
       return res.status(401).json({ error: 'invalid_token' });
@@ -185,6 +190,10 @@ router.post('/verify', async (req, res) => {
 
     if (!user) {
       return res.status(401).json({ error: 'invalid_or_expired_token' });
+    }
+
+    if (!user.token) {
+      return res.status(401).json({ error: 'invalid_token' });
     }
 
     // Vérification du token client avec le hash stocké

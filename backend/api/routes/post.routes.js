@@ -35,7 +35,6 @@ router.get('/user/:userId', verifyToken, async (req, res) => {
 
 // Route: POST /api/posts/ - Create a new post
 router.post('/', verifyToken, async (req, res) => {
-    console.log(req)
 	try {
 		const { title, content, author } = req.body;
 		if (!title || !content || !author) {
