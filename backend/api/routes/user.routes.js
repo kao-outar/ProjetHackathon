@@ -13,10 +13,10 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-router.get('/:uuid', verifyToken, async (req, res) => {
-  const { uuid } = req.params;
+router.get('/:id', verifyToken, async (req, res) => {
+  const { id } = req.params;
   try {
-    const user = await User.findOne({ uuid }, { password: 0 }); // Exclure le mot de passe
+    const user = await User.findOne({ _id: id }, { password: 0 }); // Exclure le mot de passe
     if (!user) {
       return res.status(404).json({ error: 'Utilisateur non trouvé' });
     }
@@ -27,8 +27,8 @@ router.get('/:uuid', verifyToken, async (req, res) => {
   }
 });
 
-router.put('/:uuid', verifyToken, async (req, res) => {
-  const { uuid } = req.params;
+router.put('/:id', verifyToken, async (req, res) => {
+  const { id } = req.params;
   const { email, name, age, gender } = req.body; // Pas de password dans l'update
   
   try {
@@ -49,7 +49,7 @@ router.put('/:uuid', verifyToken, async (req, res) => {
     updateData.date_updated = new Date();
     
     const updatedUser = await User.findOneAndUpdate(
-      { uuid },
+      { _id: id },
       updateData,
       { new: true, select: '-password' } // Exclure le mot de passe de la réponse
     );

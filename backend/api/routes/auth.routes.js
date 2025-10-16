@@ -32,10 +32,8 @@ router.post('/signup', async (req, res) => {
 
     const passwordHash = await bcrypt.hash(password, 10);
 
-    const uuid = crypto.randomBytes(16).toString('hex');
 
     const user = await User.create({
-      uuid,
       email: email.toLowerCase().trim(),
       password: passwordHash,
       name: name.trim(),
@@ -47,7 +45,7 @@ router.post('/signup', async (req, res) => {
 
     return res.status(201).json({
       user: {
-        uuid: user.uuid,
+        id: user._id,
         email: user.email,
         name: user.name,
         age: user.age,
@@ -103,7 +101,7 @@ router.post('/signin', async (req, res) => {
 
     // Mise à jour du token dans la base de données
     await User.findOneAndUpdate(
-      { uuid: user.uuid },
+      { _id: user._id },
       { 
         token: hashedToken,
         token_expiration: tokenExpiration,
@@ -115,7 +113,7 @@ router.post('/signin', async (req, res) => {
     return res.status(200).json({
       message: 'Connexion réussie',
       user: {
-        uuid: user.uuid,
+        id: user._id,
         email: user.email,
         name: user.name,
         age: user.age,
@@ -133,14 +131,14 @@ router.post('/signin', async (req, res) => {
 // POST /api/auth/signout
 router.post('/signout', async (req, res) => {
   try {
-    const { clientToken, userUuid } = req.body || {};
+    const { clientToken, userId } = req.body || {};
 
-    if (!clientToken || !userUuid) {
-      return res.status(422).json({ error: 'client_token_and_user_uuid_required' });
+    if (!clientToken || !userId) {
+      return res.status(422).json({ error: 'client_token_and_user_id_required' });
     }
 
     // Recherche de l'utilisateur et vérification du token
-    const user = await User.findOne({ uuid: userUuid });
+    const user = await User.findOne({ _id: userId });
     if (!user) {
       return res.status(404).json({ error: 'user_not_found' });
     }
@@ -152,7 +150,7 @@ router.post('/signout', async (req, res) => {
 
     // Suppression du token de la base de données
     await User.findOneAndUpdate(
-      { uuid: userUuid },
+      { _id: userId },
       { 
         token: null,
         token_expiration: null,
@@ -170,18 +168,18 @@ router.post('/signout', async (req, res) => {
 // POST /api/auth/verify - Vérifier la validité d'un token
 router.post('/verify', async (req, res) => {
   try {
-    const { clientToken, userUuid } = req.body || {};
+    const { clientToken, userId } = req.body || {};
 
     if (!clientToken) {
       return res.status(401).json({ error: 'client_token_required' });
     }
-    if (!userUuid) {
-      return res.status(401).json({ error: 'user_uuid_required' });
+    if (!userId) {
+      return res.status(401).json({ error: 'user_id_required' });
     }
 
-    // Recherche de l'utilisateur par UUID
+    // Recherche de l'utilisateur par ID
     const user = await User.findOne({ 
-      uuid: userUuid,
+      _id: userId,
       token_expiration: { $gt: new Date() } // Token non expiré
     });
 
@@ -198,7 +196,7 @@ router.post('/verify', async (req, res) => {
     return res.status(200).json({
       valid: true,
       user: {
-        uuid: user.uuid,
+        id: user._id,
         email: user.email,
         name: user.name,
         age: user.age,
