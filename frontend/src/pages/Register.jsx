@@ -34,7 +34,7 @@ const Register = () => {
     setSuccess(false);
     // Logique d'envoi des données au backend
     try {
-      const response = await fetch('https://hackathon-dorphs-projects.vercel.app/api/auth/signup', {
+      const response = await fetch('https://hackathon-livid-eight.vercel.app/api/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
