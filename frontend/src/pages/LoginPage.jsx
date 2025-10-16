@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { signin } from "../api/auth";
 import "../styles/auth.css"; 
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -18,13 +20,13 @@ export default function LoginPage() {
     setLoading(true);
 
     if (!email.includes("@")) {
-      setError("Email invalide");
+      setError("Invalid email");
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError("Mot de passe trop court");
+      setError("Password is too short");
       setLoading(false);
       return;
     }
@@ -34,24 +36,28 @@ export default function LoginPage() {
       setUser(data.user);
       navigate("/profile");
     } catch (err) {
-      setError(err.response?.data?.error || "Email ou mot de passe incorrect");
+      setError(err.response?.data?.error || "Incorrect email or password");
     } finally {
       setLoading(false);
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="auth-container">
       <form className="auth-form" onSubmit={handleSubmit}>
-        <h2>Connexion</h2>
-        <p className="subtitle">Accédez à votre compte</p>
+        <h2>Sign In</h2>
+        <p className="subtitle">Access your account</p>
 
         <div className="form-group">
           <label htmlFor="email">Email</label>
           <input
             type="email"
             id="email"
-            placeholder="votre@email.com"
+            placeholder="your@email.com"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
@@ -59,10 +65,10 @@ export default function LoginPage() {
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="password">Mot de passe</label>
+        <div className="form-group password-group">
+          <label htmlFor="password">Password</label>
           <input
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             id="password"
             placeholder="••••••••"
             value={password}
@@ -70,16 +76,19 @@ export default function LoginPage() {
             required
             disabled={loading}
           />
+          <span onClick={togglePasswordVisibility} className="password-toggle-icon">
+            {showPassword ? <FiEyeOff /> : <FiEye />}
+          </span>
         </div>
 
         {error && <p className="error-message">{error}</p>}
 
         <button type="submit" disabled={loading}>
-          {loading ? "Connexion..." : "Se connecter"}
+          {loading ? "Signing in..." : "Sign In"}
         </button>
 
         <p className="auth-link">
-          Pas encore de compte ? <a href="/signup">S'inscrire</a>
+          Don't have an account yet? <a href="/signup">Sign up</a>
         </p>
       </form>
     </div>
