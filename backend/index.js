@@ -32,11 +32,11 @@ mongoose.connect(process.env.MONGO_URI)
   .catch(err => console.error('❌ Erreur MongoDB:', err));
 
 // Démarrage du serveur
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Serveur démarré sur le port ${PORT}`);
-  console.log(`📡 API disponible sur http://localhost:${PORT}`);
-});
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => {
+//   console.log(`🚀 Serveur démarré sur le port ${PORT}`);
+//   console.log(`📡 API disponible sur http://localhost:${PORT}`);
+// });
 
 // On exporte notre application Express
 module.exports = app;
