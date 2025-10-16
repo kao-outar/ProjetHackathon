@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  _id: mongoose.Schema.Types.ObjectId,
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   name: String,
   age: Number,
   gender: String,
+  role: { type: String, enum: ['user', 'admin'], default: 'user' },
   date_created: { type: Date, default: Date.now },
   date_updated: { type: Date, default: Date.now },
   token: String,

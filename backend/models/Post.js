@@ -6,7 +6,7 @@ const postSchema = new mongoose.Schema({
     author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     date_created: { type: Date, default: Date.now },
     date_updated: { type: Date, default: Date.now },
-    comments: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', required: true }
+    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
 });
 
 // 🔧 Modèle
