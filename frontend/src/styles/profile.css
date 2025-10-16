@@ -1,0 +1,329 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+/* === Conteneur principal === */
+.profile-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e57c2 100%);
+  padding: 2rem 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* === Header === */
+.profile-header {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-header h1 {
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.profile-logout-btn {
+  padding: 0.8rem 1.8rem;
+  border: 2px solid white;
+  background: transparent;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.profile-logout-btn:hover {
+  background: white;
+  color: #2a5298;
+  transform: translateY(-2px);
+}
+
+/* === Wrapper du contenu === */
+.profile-content {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* === Bloc Utilisateur === */
+.profile-user-block {
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.5s ease-out;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.profile-avatar-container {
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.profile-user-info {
+  flex: 1;
+}
+
+.profile-user-name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1e3c72;
+  margin-bottom: 0.5rem;
+}
+
+.profile-user-email {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.profile-user-meta {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.profile-user-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.profile-user-meta-label {
+  color: #999;
+  font-weight: 500;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.profile-user-meta-value {
+  color: #1e3c72;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.profile-edit-btn {
+  width: 100%;
+  padding: 1rem;
+  background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.profile-edit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(42, 82, 152, 0.3);
+}
+
+/* === Bloc Posts === */
+.profile-posts-block {
+  background: white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  animation: slideIn 0.5s ease-out 0.1s both;
+}
+
+.profile-posts-block h2 {
+  color: #1e3c72;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid #2a5298;
+}
+
+.profile-posts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-height: 600px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.profile-posts-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.profile-posts-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.profile-posts-list::-webkit-scrollbar-thumb {
+  background: #2a5298;
+  border-radius: 10px;
+}
+
+.profile-post-card {
+  padding: 1.5rem;
+  border: 2px solid #e8e8e8;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+.profile-post-card:hover {
+  border-color: #2a5298;
+  box-shadow: 0 8px 20px rgba(42, 82, 152, 0.1);
+}
+
+.profile-post-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e3c72;
+  margin-bottom: 0.5rem;
+}
+
+.profile-post-content {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
+}
+
+.profile-post-date {
+  font-size: 0.8rem;
+  color: #999;
+  font-weight: 500;
+}
+
+.profile-posts-empty {
+  text-align: center;
+  padding: 2rem;
+  color: #999;
+  font-style: italic;
+}
+
+/* === État de chargement === */
+.profile-loading {
+  color: white;
+  font-size: 1.2rem;
+  text-align: center;
+  animation: pulse 1.5s infinite;
+  margin-top: 3rem;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* === Message d'erreur === */
+.profile-error {
+  background: #ffebee;
+  color: #c62828;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 5px solid #c62828;
+  font-weight: 500;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+  .profile-user-block {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .profile-user-meta {
+    justify-content: center;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .profile-header h1 {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-container {
+    padding: 1rem;
+  }
+
+  .profile-user-block,
+  .profile-posts-block {
+    padding: 1.5rem;
+  }
+
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+    font-size: 2.5rem;
+  }
+
+  .profile-user-name {
+    font-size: 1.3rem;
+  }
+
+  .profile-logout-btn {
+    width: 100%;
+  }
+
+  .profile-posts-list {
+    max-height: 400px;
+  }
+}
