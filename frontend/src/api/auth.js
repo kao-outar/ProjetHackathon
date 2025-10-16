@@ -27,9 +27,9 @@ export async function signin(email, password) {
     clientToken
   });
 
-  // Stocke le token et l'ID
+  // Stocke le token et l'UUID
   localStorage.setItem('clientToken', clientToken);
-  localStorage.setItem('userId', response.data.user._id);
+  localStorage.setItem('userUuid', response.data.user.uuid);
   localStorage.setItem('user', JSON.stringify(response.data.user));
 
   return response.data;
@@ -37,21 +37,21 @@ export async function signin(email, password) {
 
 export async function verifyToken() {
   const clientToken = localStorage.getItem('clientToken');
-  const userId = localStorage.getItem('userId');
+  const userUuid = localStorage.getItem('userUuid');
 
-  if (!clientToken || !userId) {
+  if (!clientToken || !userUuid) {
     return null;  // ✅ Retourne null si pas de token
   }
 
   try {
     const response = await API.post("/auth/verify", {
       clientToken,
-      userId
+      userUuid
     });
     return response.data.user;  // ✅ Retourne l'user
   } catch (error) {
     localStorage.removeItem('clientToken');
-    localStorage.removeItem('userId');
+    localStorage.removeItem('userUuid');
     localStorage.removeItem('user');
     return null;  // ✅ Retourne null si erreur
   }
@@ -59,13 +59,13 @@ export async function verifyToken() {
 
 export async function signout() {
   const clientToken = localStorage.getItem('clientToken');
-  const userId = localStorage.getItem('userId');
+  const userUuid = localStorage.getItem('userUuid');
 
   try {
-    if (clientToken && userId) {
+    if (clientToken && userUuid) {
       await API.post("/auth/signout", {
         clientToken,
-        userId
+        userUuid
       });
     }
   } catch (error) {
@@ -74,6 +74,6 @@ export async function signout() {
 
   // Nettoie le localStorage
   localStorage.removeItem('clientToken');
-  localStorage.removeItem('userId');
+  localStorage.removeItem('userUuid');
   localStorage.removeItem('user');
 }
