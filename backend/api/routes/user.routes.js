@@ -27,8 +27,11 @@ router.get('/:id', verifyToken, async (req, res) => {
   }
 });
 
-router.put('/:id', verifyToken, async (req, res) => {
+router.put('/:id', verifyToken(true), async (req, res) => {
   const { id } = req.params;
+  if (req.user._id.toString() !== id && req.user.role !== 'admin') {
+    return res.status(403).json({ error: 'Non autorisé à mettre à jour cet utilisateur' });
+  }
   const { email, name, age, gender } = req.body; // Pas de password dans l'update
   
   try {

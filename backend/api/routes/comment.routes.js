@@ -12,21 +12,24 @@ router.get('/', verifyToken, async (req, res) => {
 	}
 });
 // Route: POST /api/comments/ - Create a comment
-router.post('/', verifyToken, async (req, res) => {
+router.post('/', verifyToken(true), async (req, res) => {
 	try {
-		const { post, content, author } = req.body;
-		if (!post || !content || !author) {
-			return res.status(400).json({ error: 'post, content, and author are required' });
+		const { postId, content } = req.body;
+		if (!postId || !content) {
+			return res.status(400).json({ error: 'postId and content are required' });
+		}
+		const post = await Post.findById(postId);
+		if (!post) {
+			return res.status(404).json({ error: 'Post not found' });
 		}
 		const comment = await Comment.create({
-			post,
+			post: postId,
 			content,
-			author,
+			author: req.user._id,
 			date_created: new Date(),
 			date_updated: new Date(),
 		});
-		// Ajout du commentaire dans le champ comments du post
-		await Post.findByIdAndUpdate(post, { $push: { comments: comment._id } });
+		await Post.findByIdAndUpdate(postId, { $push: { comments: comment._id } });
 		res.status(201).json(comment);
 	} catch (err) {
 		res.status(500).json({ error: err.message });
@@ -45,15 +48,15 @@ router.get('/post/:postId', verifyToken, async (req, res) => {
 });
 
 // Route: PUT /api/comments/:commentId - Update a comment (author only)
-router.put('/:commentId', verifyToken, async (req, res) => {
+router.put('/:commentId', verifyToken(true), async (req, res) => {
 	const { commentId } = req.params;
-	const { author, content } = req.body;
+	const { content } = req.body;
 	try {
 		const comment = await Comment.findById(commentId);
 		if (!comment) {
 			return res.status(404).json({ error: 'Commentaire non trouvé' });
 		}
-		if (!author || comment.author.toString() !== author) {
+		if (comment.author.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
 			return res.status(403).json({ error: 'Non autorisé' });
 		}
 		if (content !== undefined) comment.content = content;
@@ -66,15 +69,14 @@ router.put('/:commentId', verifyToken, async (req, res) => {
 });
 
 // Route: DELETE /api/comments/:commentId - Delete a comment (author only)
-router.delete('/:commentId', verifyToken, async (req, res) => {
+router.delete('/:commentId', verifyToken(true), async (req, res) => {
 	const { commentId } = req.params;
-	const { author } = req.body;
 	try {
 		const comment = await Comment.findById(commentId);
 		if (!comment) {
 			return res.status(404).json({ error: 'Commentaire non trouvé' });
 		}
-		if (!author || comment.author.toString() !== author) {
+		if (comment.author.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
 			return res.status(403).json({ error: 'Non autorisé' });
 		}
 		await Comment.findByIdAndDelete(commentId);
