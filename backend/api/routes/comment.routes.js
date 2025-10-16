@@ -1,8 +1,9 @@
 const router = require('express').Router();
 const Comment = require('../../models/Comment.js');
 const Post = require('../../models/Post.js');
+const verifyToken = require('../../middleware/verifyToken');
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
     try {
 		const comments = await Comment.find();
 		res.json(comments);
@@ -11,7 +12,7 @@ router.get('/', async (req, res) => {
 	}
 });
 // Route: POST /api/comments/ - Create a comment
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
 	try {
 		const { post, content, author } = req.body;
 		if (!post || !content || !author) {
@@ -33,7 +34,7 @@ router.post('/', async (req, res) => {
 });
 
 // Route: GET /api/comments/post/:postId - Get all comments for a post
-router.get('/post/:postId', async (req, res) => {
+router.get('/post/:postId', verifyToken, async (req, res) => {
 	const { postId } = req.params;
 	try {
 		const comments = await Comment.find({ post: postId });
@@ -44,7 +45,7 @@ router.get('/post/:postId', async (req, res) => {
 });
 
 // Route: PUT /api/comments/:commentId - Update a comment (author only)
-router.put('/:commentId', async (req, res) => {
+router.put('/:commentId', verifyToken, async (req, res) => {
 	const { commentId } = req.params;
 	const { author, content } = req.body;
 	try {
@@ -65,7 +66,7 @@ router.put('/:commentId', async (req, res) => {
 });
 
 // Route: DELETE /api/comments/:commentId - Delete a comment (author only)
-router.delete('/:commentId', async (req, res) => {
+router.delete('/:commentId', verifyToken, async (req, res) => {
 	const { commentId } = req.params;
 	const { author } = req.body;
 	try {
