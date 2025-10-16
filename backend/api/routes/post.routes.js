@@ -1,10 +1,12 @@
+
 const router = require('express').Router();
 const Post = require('../../models/Post.js');
 const User = require('../../models/User.js');
+const verifyToken = require('../../middleware/verifyToken');
 
 
 // Route: GET /api/posts/ - Get all posts
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
 	try {
 		const posts = await Post.find().populate('comments');
 		res.json(posts);
@@ -14,7 +16,7 @@ router.get('/', async (req, res) => {
 });
 
 // Route: GET /api/posts/user/:userId - Get all posts by a specific user
-router.get('/user/:userId', async (req, res) => {
+router.get('/user/:userId', verifyToken, async (req, res) => {
 	const { userId } = req.params;
 	try {
 		const user = await User.findById(userId).populate({
@@ -32,7 +34,7 @@ router.get('/user/:userId', async (req, res) => {
 
 
 // Route: POST /api/posts/ - Create a new post
-router.post('/', async (req, res) => {
+router.post('/', verifyToken, async (req, res) => {
     console.log(req)
 	try {
 		const { title, content, author } = req.body;
@@ -55,7 +57,7 @@ router.post('/', async (req, res) => {
 });
 
 // Route: PUT /api/posts/:postId - Update a post (author only)
-router.put('/:postId', async (req, res) => {
+router.put('/:postId', verifyToken, async (req, res) => {
 	const { postId } = req.params;
 	const { author, title, content } = req.body;
 	try {
@@ -77,7 +79,7 @@ router.put('/:postId', async (req, res) => {
 });
 
 // Route: DELETE /api/posts/:postId - Delete a post (author only)
-router.delete('/:postId', async (req, res) => {
+router.delete('/:postId', verifyToken, async (req, res) => {
 	const { postId } = req.params;
 	const { author } = req.body;
 	try {

@@ -1,7 +1,9 @@
+
 const router = require('express').Router();
 const User = require('../../models/User.js');
+const verifyToken = require('../../middleware/verifyToken');
 
-router.get('/', async (req, res) => {
+router.get('/', verifyToken, async (req, res) => {
   try {
     const users = await User.find({}, { password: 0 });
     res.json({ users });
@@ -11,7 +13,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:uuid', async (req, res) => {
+router.get('/:uuid', verifyToken, async (req, res) => {
   const { uuid } = req.params;
   try {
     const user = await User.findOne({ uuid }, { password: 0 }); // Exclure le mot de passe
@@ -25,7 +27,7 @@ router.get('/:uuid', async (req, res) => {
   }
 });
 
-router.put('/:uuid', async (req, res) => {
+router.put('/:uuid', verifyToken, async (req, res) => {
   const { uuid } = req.params;
   const { email, name, age, gender } = req.body; // Pas de password dans l'update
   
