@@ -5,4 +5,19 @@ const API = axios.create({
   //withCredentials: true,
 });
 
+API.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('clientToken');
+    const userUuid = localStorage.getItem('userUuid');
+    if (token && userUuid) {
+      config.headers['Authorization'] = 'Bearer ' + token;
+      config.headers['X-User-UUID'] = userUuid;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export default API;
