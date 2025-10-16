@@ -31,7 +31,7 @@ export default function UsersPage() {
       <ul>
         {users.length > 0 ? (
           users.map(u => (
-            <li key={u.uuid}>
+            <li key={u._id}>
               {u.name || "(Sans nom)"} — {u.email}
             </li>
           ))
