@@ -104,12 +104,13 @@ export default function FeedPage() {
         )}
       </div>
 
-      <CreatePostModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        userId={user?._id}
-        onPostCreated={handlePostCreated}
+      <CreatePostModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          userId={user?._id || user?.id} // 🔹 ici aussi
+          onPostCreated={handlePostCreated}
       />
+
     </div>
   );
 }

@@ -21,10 +21,11 @@ export default function CreatePostModal({ isOpen, onClose, userId, onPostCreated
 
   try {
     const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || !user._id) throw new Error("User non trouvé ou mal formaté");
+    const authorId = user?._id || user?.id;
+    if (!authorId) throw new Error("User non trouvé ou mal formaté");
 
-    const authorId = user._id;
-    const post = await createPost(title, content, authorId); // ✅ MongoDB _id
+    const post = await createPost(title, content); // plus besoin de passer authorId
+
 
     onPostCreated(post);
     setTitle("");

@@ -13,15 +13,11 @@ export async function getUserPosts(userId) {
 }
 
 // 🧩 Créer un nouveau post
-export async function createPost(title, content, authorId) {
-  const response = await API.post("/posts", {
-    title,
-    content,
-    author: authorId,   // MongoDB _id
-    comments: []        // nécessaire pour le modèle
-  });
+export async function createPost(title, content) {
+  const response = await API.post("/posts", { title, content });
   return response.data;
 }
+
 
 // 🧩 Modifier un post
 export async function updatePost(postId, title, content, authorId) {
