@@ -7,11 +7,11 @@ const API = axios.create({
 
 API.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('clientToken');
-    const userUuid = localStorage.getItem('userUuid');
-    if (token && userUuid) {
-      config.headers['Authorization'] = 'Bearer ' + token;
-      config.headers['X-User-UUID'] = userUuid;
+    const clientToken = localStorage.getItem('clientToken');
+    const userId = localStorage.getItem('userId');
+    if (clientToken && userId) {
+      config.headers['x-client-token'] = clientToken;
+      config.headers['x-user-id'] = userId;
     }
     return config;
   },

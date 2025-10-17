@@ -44,10 +44,7 @@ export async function verifyToken() {
   }
 
   try {
-    const response = await API.post("/auth/verify", {
-      clientToken,
-      userId
-    });
+    const response = await API.post("/auth/verify", { clientToken, userId });
     return response.data.user;  // ✅ Retourne l'user
   } catch (error) {
     localStorage.removeItem('clientToken');
