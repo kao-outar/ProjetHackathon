@@ -37,7 +37,7 @@ describe('📝 Tests des routes de posts', () => {
       const response = await request(app)
         .get('/api/posts')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .expect(200);
 
       expect(Array.isArray(response.body)).toBe(true);
@@ -55,9 +55,9 @@ describe('📝 Tests des routes de posts', () => {
   describe('GET /api/posts/user/:userId', () => {
     it('devrait retourner les posts d\'un utilisateur spécifique', async () => {
       const response = await request(app)
-        .get(`/api/posts/user/${testUser._id}`)
+        .get(`/api/posts/user/${testUser.id}`)
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .expect(200);
 
       expect(Array.isArray(response.body)).toBe(true);
@@ -67,7 +67,7 @@ describe('📝 Tests des routes de posts', () => {
       const response = await request(app)
         .get('/api/posts/user/507f1f77bcf86cd799439011')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .expect(404);
 
       expect(response.body.error).toBe('Utilisateur non trouvé');
@@ -78,14 +78,13 @@ describe('📝 Tests des routes de posts', () => {
     it('devrait créer un nouveau post', async () => {
       const postData = {
         title: 'Mon premier post',
-        content: 'Ceci est le contenu de mon premier post.',
-        author: testUser._id
+        content: 'Ceci est le contenu de mon premier post.'
       };
 
       const response = await request(app)
         .post('/api/posts')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(postData)
         .expect(201);
 
@@ -97,50 +96,46 @@ describe('📝 Tests des routes de posts', () => {
 
     it('devrait retourner une erreur pour un titre manquant', async () => {
       const postData = {
-        content: 'Contenu sans titre',
-        author: testUser._id
+        content: 'Contenu sans titre'
       };
 
       const response = await request(app)
         .post('/api/posts')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(postData)
         .expect(400);
 
-      expect(response.body.error).toBe('title, content, and author are required');
+      expect(response.body.error).toBe('title and content are required');
     });
 
     it('devrait retourner une erreur pour un contenu manquant', async () => {
       const postData = {
-        title: 'Titre sans contenu',
-        author: testUser._id
+        title: 'Titre sans contenu'
       };
 
       const response = await request(app)
         .post('/api/posts')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(postData)
         .expect(400);
 
-      expect(response.body.error).toBe('title, content, and author are required');
+      expect(response.body.error).toBe('title and content are required');
     });
 
-    it('devrait retourner une erreur pour un auteur manquant', async () => {
+    it('devrait retourner une erreur sans authentification', async () => {
       const postData = {
-        title: 'Titre sans auteur',
-        content: 'Contenu sans auteur'
+        title: 'Titre sans auth',
+        content: 'Contenu sans auth'
       };
 
       const response = await request(app)
         .post('/api/posts')
-        .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
         .send(postData)
-        .expect(400);
+        .expect(401);
 
-      expect(response.body.error).toBe('title, content, and author are required');
+      expect(response.body.error).toBe('client_token_and_user_id_required');
     });
   });
 
@@ -151,14 +146,13 @@ describe('📝 Tests des routes de posts', () => {
       // Créer un post de test
       const postData = {
         title: 'Post de test',
-        content: 'Contenu du post de test',
-        author: testUser._id
+        content: 'Contenu du post de test'
       };
 
       const postResponse = await request(app)
         .post('/api/posts')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(postData);
       
       testPost = postResponse.body;
@@ -167,14 +161,13 @@ describe('📝 Tests des routes de posts', () => {
     it('devrait mettre à jour un post', async () => {
       const updateData = {
         title: 'Post mis à jour',
-        content: 'Contenu mis à jour',
-        author: testUser._id
+        content: 'Contenu mis à jour'
       };
 
       const response = await request(app)
         .put(`/api/posts/${testPost._id}`)
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(updateData)
         .expect(200);
 
@@ -185,14 +178,13 @@ describe('📝 Tests des routes de posts', () => {
     it('devrait retourner une erreur pour un post inexistant', async () => {
       const updateData = {
         title: 'Post inexistant',
-        content: 'Ce post n\'existe pas',
-        author: testUser._id
+        content: 'Ce post n\'existe pas'
       };
 
       const response = await request(app)
         .put('/api/posts/507f1f77bcf86cd799439011')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(updateData)
         .expect(404);
 
@@ -207,14 +199,13 @@ describe('📝 Tests des routes de posts', () => {
       // Créer un post de test
       const postData = {
         title: 'Post à supprimer',
-        content: 'Ce post sera supprimé',
-        author: testUser._id
+        content: 'Ce post sera supprimé'
       };
 
       const postResponse = await request(app)
         .post('/api/posts')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(postData);
       
       testPost = postResponse.body;
@@ -224,17 +215,17 @@ describe('📝 Tests des routes de posts', () => {
       const response = await request(app)
         .delete(`/api/posts/${testPost._id}`)
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .expect(200);
 
-      expect(response.body.message).toBe('Post supprimé avec succès');
+      expect(response.body.message).toBe('Post supprimé');
     });
 
     it('devrait retourner une erreur pour un post inexistant', async () => {
       const response = await request(app)
         .delete('/api/posts/507f1f77bcf86cd799439011')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .expect(404);
 
       expect(response.body.error).toBe('Post non trouvé');

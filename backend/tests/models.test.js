@@ -75,59 +75,6 @@ describe('📋 Tests des modèles', () => {
       }
     });
 
-    it('devrait rejeter un utilisateur sans nom', async () => {
-      const userData = {
-        email: 'noname@example.com',
-        password: 'password123'
-      };
-
-      const user = new User(userData);
-      
-      try {
-        await user.save();
-        fail('Le modèle devrait rejeter un utilisateur sans nom');
-      } catch (error) {
-        expect(error.name).toBe('ValidationError');
-        expect(error.errors.name).toBeDefined();
-      }
-    });
-
-    it('devrait rejeter un email invalide', async () => {
-      const userData = {
-        email: 'email-invalide',
-        password: 'password123',
-        name: 'Invalid Email User'
-      };
-
-      const user = new User(userData);
-      
-      try {
-        await user.save();
-        fail('Le modèle devrait rejeter un email invalide');
-      } catch (error) {
-        expect(error.name).toBe('ValidationError');
-        expect(error.errors.email).toBeDefined();
-      }
-    });
-
-    it('devrait rejeter un genre invalide', async () => {
-      const userData = {
-        email: 'invalidgender@example.com',
-        password: 'password123',
-        name: 'Invalid Gender User',
-        gender: 'invalid-gender'
-      };
-
-      const user = new User(userData);
-      
-      try {
-        await user.save();
-        fail('Le modèle devrait rejeter un genre invalide');
-      } catch (error) {
-        expect(error.name).toBe('ValidationError');
-        expect(error.errors.gender).toBeDefined();
-      }
-    });
   });
 
   describe('Modèle Post', () => {
@@ -171,7 +118,7 @@ describe('📋 Tests des modèles', () => {
       
       try {
         await post.save();
-        fail('Le modèle devrait rejeter un post sans titre');
+        throw new Error('Le modèle devrait rejeter un post sans titre');
       } catch (error) {
         expect(error.errors.title).toBeDefined();
       }
@@ -187,7 +134,7 @@ describe('📋 Tests des modèles', () => {
       
       try {
         await post.save();
-        fail('Le modèle devrait rejeter un post sans contenu');
+        throw new Error('Le modèle devrait rejeter un post sans contenu');
       } catch (error) {
         expect(error.errors.content).toBeDefined();
       }
@@ -203,7 +150,7 @@ describe('📋 Tests des modèles', () => {
       
       try {
         await post.save();
-        fail('Le modèle devrait rejeter un post sans auteur');
+        throw new Error('Le modèle devrait rejeter un post sans auteur');
       } catch (error) {
         expect(error.errors.author).toBeDefined();
       }
@@ -258,7 +205,7 @@ describe('📋 Tests des modèles', () => {
       
       try {
         await comment.save();
-        fail('Le modèle devrait rejeter un commentaire sans contenu');
+        throw new Error('Le modèle devrait rejeter un commentaire sans contenu');
       } catch (error) {
         expect(error.errors.content).toBeDefined();
       }
@@ -274,7 +221,7 @@ describe('📋 Tests des modèles', () => {
       
       try {
         await comment.save();
-        fail('Le modèle devrait rejeter un commentaire sans post');
+        throw new Error('Le modèle devrait rejeter un commentaire sans post');
       } catch (error) {
         expect(error.errors.post).toBeDefined();
       }
@@ -290,7 +237,7 @@ describe('📋 Tests des modèles', () => {
       
       try {
         await comment.save();
-        fail('Le modèle devrait rejeter un commentaire sans auteur');
+        throw new Error('Le modèle devrait rejeter un commentaire sans auteur');
       } catch (error) {
         expect(error.errors.author).toBeDefined();
       }

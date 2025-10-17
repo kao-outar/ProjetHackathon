@@ -36,7 +36,7 @@ describe('💬 Tests des routes de commentaires', () => {
     const postData = {
       title: 'Post pour commentaires',
       content: 'Ceci est un post pour tester les commentaires.',
-        author: testUser._id
+        author: testUser.id
     };
 
     const postResponse = await request(app)
@@ -51,15 +51,14 @@ describe('💬 Tests des routes de commentaires', () => {
   describe('POST /api/comments', () => {
     it('devrait créer un nouveau commentaire', async () => {
       const commentData = {
-        post: testPost._id,
-        content: 'Ceci est un commentaire de test.',
-        author: testUser._id
+        postId: testPost._id,
+        content: 'Ceci est un commentaire de test.'
       };
 
       const response = await request(app)
         .post('/api/comments')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(commentData)
         .expect(201);
 
@@ -71,50 +70,46 @@ describe('💬 Tests des routes de commentaires', () => {
 
     it('devrait retourner une erreur pour un contenu manquant', async () => {
       const commentData = {
-        post: testPost._id,
-        author: testUser._id
+        postId: testPost._id
       };
 
       const response = await request(app)
         .post('/api/comments')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(commentData)
         .expect(400);
 
-      expect(response.body.error).toBe('post, content, and author are required');
+      expect(response.body.error).toBe('postId and content are required');
     });
 
     it('devrait retourner une erreur pour un post manquant', async () => {
       const commentData = {
-        content: 'Commentaire sans post',
-        author: testUser._id
+        content: 'Commentaire sans post'
       };
 
       const response = await request(app)
         .post('/api/comments')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(commentData)
         .expect(400);
 
-      expect(response.body.error).toBe('post, content, and author are required');
+      expect(response.body.error).toBe('postId and content are required');
     });
 
-    it('devrait retourner une erreur pour un auteur manquant', async () => {
+    it('devrait retourner une erreur sans authentification', async () => {
       const commentData = {
-        post: testPost._id,
-        content: 'Commentaire sans auteur'
+        postId: testPost._id,
+        content: 'Commentaire sans auth'
       };
 
       const response = await request(app)
         .post('/api/comments')
-        .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
         .send(commentData)
-        .expect(400);
+        .expect(401);
 
-      expect(response.body.error).toBe('post, content, and author are required');
+      expect(response.body.error).toBe('client_token_and_user_id_required');
     });
   });
 
@@ -122,21 +117,20 @@ describe('💬 Tests des routes de commentaires', () => {
     it('devrait retourner la liste des commentaires d\'un post', async () => {
       // Créer un commentaire
       const commentData = {
-        post: testPost._id,
-        content: 'Commentaire de test',
-        author: testUser._id
+        postId: testPost._id,
+        content: 'Commentaire de test'
       };
 
       await request(app)
         .post('/api/comments')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(commentData);
 
       const response = await request(app)
         .get(`/api/comments/post/${testPost._id}`)
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .expect(200);
 
       expect(Array.isArray(response.body)).toBe(true);
@@ -148,7 +142,7 @@ describe('💬 Tests des routes de commentaires', () => {
       const response = await request(app)
         .get(`/api/comments/post/${testPost._id}`)
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .expect(200);
 
       expect(Array.isArray(response.body)).toBe(true);
@@ -162,15 +156,14 @@ describe('💬 Tests des routes de commentaires', () => {
     beforeEach(async () => {
       // Créer un commentaire de test
       const commentData = {
-        post: testPost._id,
-        content: 'Commentaire original',
-        author: testUser._id
+        postId: testPost._id,
+        content: 'Commentaire original'
       };
 
       const commentResponse = await request(app)
         .post('/api/comments')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(commentData);
       
       testComment = commentResponse.body;
@@ -178,14 +171,13 @@ describe('💬 Tests des routes de commentaires', () => {
 
     it('devrait mettre à jour un commentaire', async () => {
       const updateData = {
-        content: 'Commentaire modifié',
-        author: testUser._id
+        content: 'Commentaire modifié'
       };
 
       const response = await request(app)
         .put(`/api/comments/${testComment._id}`)
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(updateData)
         .expect(200);
 
@@ -194,14 +186,13 @@ describe('💬 Tests des routes de commentaires', () => {
 
     it('devrait retourner une erreur pour un commentaire inexistant', async () => {
       const updateData = {
-        content: 'Commentaire inexistant',
-        author: testUser._id
+        content: 'Commentaire inexistant'
       };
 
       const response = await request(app)
         .put('/api/comments/507f1f77bcf86cd799439011')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(updateData)
         .expect(404);
 
@@ -215,15 +206,14 @@ describe('💬 Tests des routes de commentaires', () => {
     beforeEach(async () => {
       // Créer un commentaire de test
       const commentData = {
-        post: testPost._id,
-        content: 'Commentaire à supprimer',
-        author: testUser._id
+        postId: testPost._id,
+        content: 'Commentaire à supprimer'
       };
 
       const commentResponse = await request(app)
         .post('/api/comments')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .send(commentData);
       
       testComment = commentResponse.body;
@@ -233,17 +223,17 @@ describe('💬 Tests des routes de commentaires', () => {
       const response = await request(app)
         .delete(`/api/comments/${testComment._id}`)
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .expect(200);
 
-      expect(response.body.message).toBe('Commentaire supprimé avec succès');
+      expect(response.body.message).toBe('Commentaire supprimé');
     });
 
     it('devrait retourner une erreur pour un commentaire inexistant', async () => {
       const response = await request(app)
         .delete('/api/comments/507f1f77bcf86cd799439011')
         .set('x-client-token', clientToken)
-        .set('x-user-id', testUser._id)
+        .set('x-user-id', testUser.id)
         .expect(404);
 
       expect(response.body.error).toBe('Commentaire non trouvé');
