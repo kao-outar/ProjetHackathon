@@ -10,6 +10,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mongodb:
+        image: mongo
+        ports:
+          - 27017:27017
+
     strategy:
       matrix:
         node-version: [18.x, 20.x]
@@ -33,3 +39,5 @@ jobs:
 
     - name: Run tests
       run: npm test
+      env:
+        MONGO_URI: mongodb://localhost:27017/test
