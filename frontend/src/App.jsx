@@ -7,6 +7,7 @@ import Register from "./pages/Register";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import PublicRoute from "./components/Auth/PublicRoute";
 import FeedPage from "./pages/FeedPage";
+import ProfileEditPage from "./pages/ProfilEditPage";
 
 function App() {
   return (
@@ -34,6 +35,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <ProfilePages />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile/:userId"
+            element={
+              <ProtectedRoute>
+                <ProfilePages />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile/edit"
+            element={
+              <ProtectedRoute>
+                <ProfileEditPage />
               </ProtectedRoute>
             }
           />

@@ -8,6 +8,7 @@ import "../styles/feed.css";
 export default function FeedPage() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,17 +19,22 @@ export default function FeedPage() {
         const data = await getAllPosts();
         setPosts(data);
       } catch (err) {
-        console.error("Erreur lors du chargement des posts:", err);
+        console.error("Erreur lors du chargement des posts :", err);
       } finally {
         setLoading(false);
       }
     }
-
     fetchPosts();
   }, []);
 
+  // ✅ redirige vers /profile ou /profile/:userId selon la personne
   const handleUserClick = (userId) => {
-    navigate(`/user/${userId}`);
+    if (!userId) return;
+    if (user && (user._id === userId || user.id === userId)) {
+      navigate("/profile");
+    } else {
+      navigate(`/profile/${userId}`);
+    }
   };
 
   const handlePostCreated = (newPost) => {
@@ -43,17 +49,19 @@ export default function FeedPage() {
     <div className="feed-container">
       <div className="feed-header">
         <h1>Fil d'actualité</h1>
-        <button 
-          className="feed-profile-btn"
-          onClick={() => navigate("/profile")}
-        >
-          Mon profil
-        </button>
+        {user && (
+          <button
+            className="feed-profile-btn"
+            onClick={() => navigate("/profile")}
+          >
+            Mon profil
+          </button>
+        )}
       </div>
 
       <div className="feed-content">
         {user && (
-          <button 
+          <button
             className="feed-create-post-btn"
             onClick={() => setIsModalOpen(true)}
           >
@@ -66,21 +74,33 @@ export default function FeedPage() {
             {posts.map((post) => (
               <div key={post._id} className="feed-post-card">
                 <div className="feed-post-header">
-                  <div 
+                  <div
                     className="feed-post-avatar"
                     onClick={() => handleUserClick(post.author._id)}
                   >
-                    {post.author?.name?.charAt(0).toUpperCase() || "U"}
+                    {post.author?.icon ? (
+                      <img
+                        src={post.author.icon}
+                        alt={post.author.name}
+                        className="feed-post-avatar-img"
+                      />
+                    ) : (
+                      post.author?.name?.charAt(0).toUpperCase() || "U"
+                    )}
                   </div>
                   <div className="feed-post-user-info">
-                    <div 
+                    <div
                       className="feed-post-username"
                       onClick={() => handleUserClick(post.author._id)}
                     >
                       {post.author?.name}
                     </div>
                     <div className="feed-post-date">
-                      {new Date(post.date_created).toLocaleDateString("fr-FR")}
+                      {new Date(post.date_created).toLocaleDateString("fr-FR", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                      })}
                     </div>
                   </div>
                 </div>
@@ -105,12 +125,11 @@ export default function FeedPage() {
       </div>
 
       <CreatePostModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          userId={user?._id || user?.id} // 🔹 ici aussi
-          onPostCreated={handlePostCreated}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        userId={user?._id || user?.id}
+        onPostCreated={handlePostCreated}
       />
-
     </div>
   );
 }
