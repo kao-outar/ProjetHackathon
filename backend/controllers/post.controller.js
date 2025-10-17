@@ -7,7 +7,8 @@ class PostController {
     try {
       const posts = await Post.find()
         .populate('comments')
-        .populate({ path: 'author', select: '-password -__v' });
+        .populate({ path: 'author', select: '-password -__v' })
+        .populate({ path: 'likes', select: 'username email' });
       res.json(posts);
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -90,6 +91,40 @@ class PostController {
       // Retirer le post de la liste de l'utilisateur
       await User.findByIdAndUpdate(post.author, { $pull: { posts: postId } });
       res.json({ message: 'Post supprimé' });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+
+  // POST /api/posts/:postId/like - Toggle like on a post
+  async toggleLike(req, res) {
+    const { postId } = req.params;
+    try {
+      const post = await Post.findById(postId);
+      if (!post) {
+        return res.status(404).json({ error: 'Post non trouvé' });
+      }
+
+      const userId = req.user._id.toString();
+      const likeIndex = post.likes.findIndex(id => id.toString() === userId);
+
+      if (likeIndex > -1) {
+        post.likes.splice(likeIndex, 1);
+      } else {
+        post.likes.push(req.user._id);
+      }
+
+      await post.save();
+      
+      const updatedPost = await Post.findById(postId)
+        .populate({ path: 'likes', select: 'username email' })
+        .populate({ path: 'author', select: '-password -__v' })
+        .populate('comments');
+
+      res.json({
+        message: likeIndex > -1 ? 'Like retiré' : 'Like ajouté',
+        post: updatedPost
+      });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
