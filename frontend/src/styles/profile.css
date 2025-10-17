@@ -236,11 +236,16 @@ html, body, #root {
   border: 2px solid #e8e8e8;
   border-radius: 10px;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .profile-post-card:hover {
   border-color: #2a5298;
   box-shadow: 0 8px 20px rgba(42, 82, 152, 0.1);
+}
+
+.profile-post-display {
+  position: relative;
 }
 
 .profile-post-title {
@@ -344,5 +349,270 @@ html, body, #root {
 
   .profile-posts-list {
     max-height: 400px;
+  }
+}
+
+/* Bouton de suppression avec icône */
+.profile-post-delete-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 8px;
+  background-color: white;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.profile-post-delete-btn:hover {
+  background-color: #dc3545;
+  color: white;
+}
+
+.profile-post-delete-btn svg {
+  display: block;
+}
+
+/* Actions en bas (seulement le bouton Modifier maintenant) */
+.profile-post-actions {
+  margin-top: 15px;
+  display: flex;
+  gap: 10px;
+}
+
+.profile-post-edit-btn {
+  padding: 6px 16px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.profile-post-edit-btn:hover {
+  background-color: #357abd;
+}
+
+/* Formulaire d'édition */
+.profile-post-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-post-edit-title {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: inherit;
+}
+
+.profile-post-edit-content {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.profile-post-edit-title:focus,
+.profile-post-edit-content:focus {
+  outline: none;
+  border-color: #4a90e2;
+}
+
+.profile-post-edit-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.profile-post-save-btn,
+.profile-post-cancel-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.profile-post-save-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.profile-post-save-btn:hover:not(:disabled) {
+  background-color: #45a049;
+}
+
+.profile-post-cancel-btn {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.profile-post-cancel-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.profile-post-save-btn:disabled,
+.profile-post-cancel-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Modal de suppression */
+.delete-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.delete-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.delete-modal-title {
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.delete-modal-text {
+  margin: 0 0 25px 0;
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.delete-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.delete-modal-cancel-btn,
+.delete-modal-confirm-btn {
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-modal-cancel-btn {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.delete-modal-cancel-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.delete-modal-confirm-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.delete-modal-confirm-btn:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.delete-modal-cancel-btn:disabled,
+.delete-modal-confirm-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Toast de succès */
+.success-toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background-color: #4caf50;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-in 2.7s;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.success-toast svg {
+  flex-shrink: 0;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
   }
 }
