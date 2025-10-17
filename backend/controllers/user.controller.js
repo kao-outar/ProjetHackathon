@@ -33,7 +33,7 @@ class UserController {
     if (req.user._id.toString() !== id && req.user.role !== 'admin') {
       return res.status(403).json({ error: 'Non autorisé à mettre à jour cet utilisateur' });
     }
-    const { email, name, age, gender } = req.body;
+    const { email, name, age, gender, icon } = req.body;
     
     try {
       const updateData = {};
@@ -48,6 +48,9 @@ class UserController {
       }
       if (gender && ['male', 'female', 'other', 'prefer_not_to_say'].includes(gender.toLowerCase())) {
         updateData.gender = gender.toLowerCase();
+      }
+      if (icon && typeof icon === 'string' && icon.trim().length > 0) {
+        updateData.icon = icon.trim();
       }
       
       updateData.date_updated = new Date();

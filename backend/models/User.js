@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   name: String,
   age: Number,
   gender: String,
+  icon: String,
   role: { type: String, enum: ['user', 'admin'], default: 'user' },
   date_created: { type: Date, default: Date.now },
   date_updated: { type: Date, default: Date.now },
