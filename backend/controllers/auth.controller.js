@@ -5,7 +5,7 @@ class AuthController {
   // POST /api/auth/signup
   async signup(req, res) {
     try {
-      const { email, password, name, age, gender } = req.body || {};
+      const { email, password, name, age, gender, icon } = req.body || {};
 
       // Validation des champs requis
       if (!email || !/.+@.+\..+/.test(email)) {
@@ -38,7 +38,8 @@ class AuthController {
         age: age || undefined,
         gender: gender ? gender.toLowerCase() : undefined,
         date_created: new Date(),
-        date_updated: new Date()
+        date_updated: new Date(),
+        icon: icon ? icon.trim() : undefined,
       });
 
       return res.status(201).json({
@@ -50,7 +51,8 @@ class AuthController {
           age: user.age,
           gender: user.gender,
           date_created: user.date_created,
-          date_updated: user.date_updated
+          date_updated: user.date_updated,
+          icon: user.icon
         }
       });
     } catch (e) {
