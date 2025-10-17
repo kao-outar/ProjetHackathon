@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createPost } from "../../api/post";
 import "../../styles/create-post-modal.css";
 
-export default function CreatePostModal({ isOpen, onClose, userId, onPostCreated }) {
+export default function CreatePostModal({ isOpen, onClose, onPostCreated }) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(false);
