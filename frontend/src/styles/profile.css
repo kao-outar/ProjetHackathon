@@ -236,7 +236,7 @@ html, body, #root {
   border: 2px solid #e8e8e8;
   border-radius: 10px;
   transition: all 0.3s ease;
-  position: relative; /* Important pour positionner la poubelle */
+  position: relative;
 }
 
 .profile-post-card:hover {

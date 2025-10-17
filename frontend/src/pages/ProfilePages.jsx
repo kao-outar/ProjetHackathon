@@ -341,9 +341,9 @@ export default function ProfilePage() {
       {deleteModalOpen && (
         <div className="delete-modal-overlay" onClick={handleCloseDeleteModal}>
           <div className="delete-modal" onClick={(e) => e.stopPropagation()}>
-            <h3 className="delete-modal-title">Supprimer le message</h3>
+            <h3 className="delete-modal-title">Supprimer le post</h3>
             <p className="delete-modal-text">
-              Êtes-vous sûr de vouloir supprimer votre message ?
+              Êtes-vous sûr de vouloir supprimer votre post ?
             </p>
             <div className="delete-modal-actions">
               <button
@@ -381,7 +381,7 @@ export default function ProfilePage() {
           >
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
-          <span>Message supprimé avec succès</span>
+          <span>Post supprimé avec succès</span>
         </div>
       )}
     </div>
