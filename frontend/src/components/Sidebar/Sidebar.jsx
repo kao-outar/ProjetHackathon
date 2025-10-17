@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiSearch, FiUser, FiLogOut, FiHome } from 'react-icons/fi';
+import { FiSearch, FiUser, FiLogOut, FiHome, FiUsers } from 'react-icons/fi';
 import './Sidebar.css';
 import viteLogo from '/vite.svg';
 import { useAuth } from '../../hooks/useAuth';
@@ -43,6 +43,10 @@ const Sidebar = () => {
         <Link to="/profile" className="nav-item">
           <FiUser className="nav-icon" />
           <span>Profile</span>
+        </Link>
+        <Link to="/users" className="nav-item">
+          <FiUsers className="nav-icon" />
+          <span>Users</span>
         </Link>
         {/* Add other navigation items here */}
       </nav>
