@@ -3,6 +3,7 @@
 A complete mini social network built during the **Hackathon October 2025**, using **Node.js**, **Express**, **MongoDB**, and **React/Vue**.  
 The project demonstrates secure authentication, API communication, and deployment with **Vercel** and **GitHub Actions**.
 
+You can access the app here: [projet-hackathon-nine.vercel.app](https://projet-hackathon-nine.vercel.app)
 ---
 
 ## 🚀 Overview
@@ -10,9 +11,9 @@ The project demonstrates secure authentication, API communication, and deploymen
 This project aims to create a **fully functional social mini-network** that allows users to register, log in, create profiles, posts, comments, and view statistics as an admin — all within 3 days by a team of 4 junior developers.
 
 Team : 
-Pierric Letard
-XXXXXXX XXXXXXX
-XXXXXXX XXXXXXX
+Pierric Letard,
+XXXXXXX XXXXXXX,
+XXXXXXX XXXXXXX,
 XXXXXXX XXXXXXX
 
 ---
