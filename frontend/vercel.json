@@ -3,6 +3,10 @@
         {
             "source": "/api/:path*",
             "destination": "https://hackathon-livid-eight.vercel.app/api/:path*"
+        },
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
         }
     ]
 }
