@@ -2,7 +2,7 @@
   import { FiUser, FiMail, FiLock, FiHash, FiUsers, FiEye, FiEyeOff } from 'react-icons/fi';
   import '../styles/auth.css';
   import { signup, signin } from '../api/auth';
-  import { useNavigate } from 'react-router-dom';
+  import { useNavigate, Link } from 'react-router-dom';
   import { useAuth } from '../hooks/useAuth';
 
   const Register = () => {
@@ -168,7 +168,7 @@
           </button>
 
           <p className="auth-link">
-            Already have an account? <a href="/login">Log in</a>
+            Already have an account? <Link to="/login">Log in</Link>
           </p>
         </form>
       </div>
