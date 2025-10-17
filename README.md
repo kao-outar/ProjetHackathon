@@ -7,7 +7,13 @@ The project demonstrates secure authentication, API communication, and deploymen
 
 ## 🚀 Overview
 
-This project aims to create a **fully functional social mini-network** that allows users to register, log in, create profiles, comment on others, and view statistics — all within 3 days by a team of 4 junior developers.
+This project aims to create a **fully functional social mini-network** that allows users to register, log in, create profiles, posts, comments, and view statistics as an admin — all within 3 days by a team of 4 junior developers.
+
+Team : 
+Pierric Letard
+XXXXXXX XXXXXXX
+XXXXXXX XXXXXXX
+XXXXXXX XXXXXXX
 
 ---
 
