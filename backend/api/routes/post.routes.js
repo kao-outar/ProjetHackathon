@@ -6,7 +6,7 @@ const verifyToken = require('../../middleware/verifyToken');
 
 
 // Route: GET /api/posts/ - Get all posts
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', verifyToken(false), async (req, res) => {
 	try {
 		const posts = await Post.find().populate('comments');
 		res.json(posts);
@@ -16,7 +16,7 @@ router.get('/', verifyToken, async (req, res) => {
 });
 
 // Route: GET /api/posts/user/:userId - Get all posts by a specific user
-router.get('/user/:userId', verifyToken, async (req, res) => {
+router.get('/user/:userId', verifyToken(false), async (req, res) => {
 	const { userId } = req.params;
 	try {
 		const user = await User.findById(userId).populate({

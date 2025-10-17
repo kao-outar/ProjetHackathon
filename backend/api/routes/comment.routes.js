@@ -3,7 +3,7 @@ const Comment = require('../../models/Comment.js');
 const Post = require('../../models/Post.js');
 const verifyToken = require('../../middleware/verifyToken');
 
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', verifyToken(false), async (req, res) => {
     try {
 		const comments = await Comment.find();
 		res.json(comments);
@@ -37,7 +37,7 @@ router.post('/', verifyToken(true), async (req, res) => {
 });
 
 // Route: GET /api/comments/post/:postId - Get all comments for a post
-router.get('/post/:postId', verifyToken, async (req, res) => {
+router.get('/post/:postId'(false), async (req, res) => {
 	const { postId } = req.params;
 	try {
 		const comments = await Comment.find({ post: postId });

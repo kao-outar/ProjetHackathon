@@ -3,7 +3,7 @@ const router = require('express').Router();
 const User = require('../../models/User.js');
 const verifyToken = require('../../middleware/verifyToken');
 
-router.get('/', verifyToken, async (req, res) => {
+router.get('/', verifyToken(false), async (req, res) => {
   try {
     const users = await User.find({}, { password: 0, token: 0, token_expiration: 0 });
     res.json({ users });
@@ -13,7 +13,7 @@ router.get('/', verifyToken, async (req, res) => {
   }
 });
 
-router.get('/:id', verifyToken, async (req, res) => {
+router.get('/:id', verifyToken(false), async (req, res) => {
   const { id } = req.params;
   try {
     const user = await User.findOne({ _id: id }, { password: 0, token: 0, token_expiration: 0 }); // Exclure les champs sensibles
