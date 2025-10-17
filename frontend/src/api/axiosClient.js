@@ -5,19 +5,28 @@ const API = axios.create({
   //withCredentials: true,
 });
 
+// ✅ Intercepteur pour ajouter automatiquement les headers d’authentification
 API.interceptors.request.use(
   (config) => {
-    const clientToken = localStorage.getItem('clientToken');
-    const userId = localStorage.getItem('userId');
-    if (clientToken && userId) {
-      config.headers['x-client-token'] = clientToken;
-      config.headers['x-user-id'] = userId;
+    const clientToken = localStorage.getItem("clientToken");
+    const user = localStorage.getItem("user")
+      ? JSON.parse(localStorage.getItem("user"))
+      : null;
+
+    // ✅ Utilisation du bon identifiant depuis la BDD
+    const userId = user?.id || user?._id; // le backend renvoie "id"
+
+    if (clientToken) {
+      config.headers["x-client-token"] = clientToken;
     }
+
+    if (userId) {
+      config.headers["x-user-id"] = userId;
+    }
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 export default API;

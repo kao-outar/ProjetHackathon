@@ -37,8 +37,7 @@ describe('🔗 Tests d\'intégration', () => {
       // 1. Créer un post
       const postData = {
         title: 'Post d\'intégration',
-        content: 'Ceci est un post de test d\'intégration.',
-        author: testUser.id
+        content: 'Ceci est un post de test d\'intégration.'
       };
 
       const postResponse = await request(app)
@@ -52,15 +51,13 @@ describe('🔗 Tests d\'intégration', () => {
 
       // 2. Ajouter des commentaires au post
       const comment1Data = {
-        post: post._id,
-        content: 'Premier commentaire',
-        author: testUser.id
+        postId: post._id,
+        content: 'Premier commentaire'
       };
 
       const comment2Data = {
-        post: post._id,
-        content: 'Deuxième commentaire',
-        author: testUser.id
+        postId: post._id,
+        content: 'Deuxième commentaire'
       };
 
       const comment1Response = await request(app)
@@ -101,8 +98,7 @@ describe('🔗 Tests d\'intégration', () => {
       // 5. Modifier le post
       const updatePostData = {
         title: 'Post d\'intégration modifié',
-        content: 'Contenu modifié',
-        author: testUser.id
+        content: 'Contenu modifié'
       };
 
       const updatedPostResponse = await request(app)
@@ -116,8 +112,7 @@ describe('🔗 Tests d\'intégration', () => {
 
       // 6. Modifier un commentaire
       const updateCommentData = {
-        content: 'Commentaire modifié',
-        author: testUser.id
+        content: 'Commentaire modifié'
       };
 
       const updatedCommentResponse = await request(app)
@@ -168,8 +163,7 @@ describe('🔗 Tests d\'intégration', () => {
       // Tenter de créer un post sans authentification
       const postData = {
         title: 'Post sans auth',
-        content: 'Ceci ne devrait pas fonctionner',
-        author: testUser.id
+        content: 'Ceci ne devrait pas fonctionner'
       };
 
       await request(app)
@@ -191,8 +185,7 @@ describe('🔗 Tests d\'intégration', () => {
     it('devrait rejeter les requêtes avec des tokens invalides', async () => {
       const postData = {
         title: 'Post avec token invalide',
-        content: 'Ceci ne devrait pas fonctionner',
-        author: testUser.id
+        content: 'Ceci ne devrait pas fonctionner'
       };
 
       await request(app)
