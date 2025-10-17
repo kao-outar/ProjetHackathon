@@ -37,7 +37,7 @@ router.post('/', verifyToken(true), async (req, res) => {
 });
 
 // Route: GET /api/comments/post/:postId - Get all comments for a post
-router.get('/post/:postId'(false), async (req, res) => {
+router.get('/post/:postId', verifyToken(false), async (req, res) => {
 	const { postId } = req.params;
 	try {
 		const comments = await Comment.find({ post: postId });
