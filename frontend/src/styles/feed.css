@@ -17,6 +17,10 @@
   align-items: center;
 }
 
+.feed-create-post-btn{
+  margin-bottom: 25px;
+}
+
 .feed-header h1 {
   color: white;
   font-size: 2rem;
