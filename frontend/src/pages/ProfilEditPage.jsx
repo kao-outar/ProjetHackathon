@@ -56,11 +56,11 @@ export default function ProfileEditPage() {
 
   return (
     <div className="profile-edit-container">
-      <h1>Modifier mon profil</h1>
+      <h1>Edit my profile</h1>
       {error && <p className="profile-edit-error">{error}</p>}
       <form className="profile-edit-form" onSubmit={handleSubmit}>
         <label>
-          Nom
+          Name
           <input
             type="text"
             name="name"
@@ -84,7 +84,7 @@ export default function ProfileEditPage() {
         </label>
 
         <label>
-          Âge
+          Age
           <input
             type="number"
             name="age"
@@ -97,18 +97,18 @@ export default function ProfileEditPage() {
         </label>
 
         <label>
-          Genre
+          Gender
           <select
             name="gender"
             value={formData.gender}
             onChange={handleChange}
             disabled={saving}
           >
-            <option value="">Non renseigné</option>
-            <option value="male">Homme</option>
-            <option value="female">Femme</option>
-            <option value="other">Autre</option>
-            <option value="prefer_not_to_say">Préférer ne pas dire</option>
+            <option value="">Not specified</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+            <option value="prefer_not_to_say">Prefer not to say</option>
           </select>
         </label>
         {/* Prévisualisation de l'avatar */}
@@ -131,14 +131,14 @@ export default function ProfileEditPage() {
 
         <div className="profile-edit-actions">
           <button type="submit" disabled={saving}>
-            {saving ? "Enregistrement..." : "Sauvegarder"}
+            {saving ? "Saving..." : "Save"}
           </button>
           <button
             type="button"
             onClick={() => navigate("/profile")}
             disabled={saving}
           >
-            Annuler
+            Cancel
           </button>
         </div>
       </form>
