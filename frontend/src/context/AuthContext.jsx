@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import { verifyToken, signout as apiSignout } from "../api/auth";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -26,7 +27,7 @@ export function AuthProvider({ children }) {
             localStorage.removeItem('userId');
             localStorage.removeItem('clientToken');
           }
-        } catch (error) {
+        } catch {
           setUser(null);
           setIsAuthenticated(false);
         }

@@ -13,7 +13,7 @@ This project aims to create a **fully functional social mini-network** that allo
 
 Team : 
 Pierric Letard,
-XXXXXXX XXXXXXX,
+Kaoutar Arare,
 Mahmut-Ali TOPAL,
 XXXXXXX XXXXXXX
 
