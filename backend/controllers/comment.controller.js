@@ -5,7 +5,7 @@ class CommentController {
   // GET /api/comments/ - Get all comments
   async getAllComments(req, res) {
     try {
-      const comments = await Comment.find();
+      const comments = await Comment.find().populate({ path: 'author', select: '-password -__v' });
       res.json(comments);
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -41,7 +41,7 @@ class CommentController {
   async getCommentsByPost(req, res) {
     const { postId } = req.params;
     try {
-      const comments = await Comment.find({ post: postId });
+      const comments = await Comment.find({ post: postId }).populate({ path: 'author', select: '-password -__v' });
       res.json(comments);
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -53,7 +53,7 @@ class CommentController {
     const { commentId } = req.params;
     const { content } = req.body;
     try {
-      const comment = await Comment.findById(commentId);
+      const comment = await Comment.findById(commentId).populate({ path: 'author', select: '-password -__v' });
       if (!comment) {
         return res.status(404).json({ error: 'Commentaire non trouvé' });
       }

@@ -64,7 +64,17 @@ export default function UsersPage() {
           filteredUsers.map(user => (
             <div className="profile-user-block">
           <div className="profile-avatar-container">
-            <div className="profile-avatar">P</div>
+            <div className="profile-avatar">
+              {user.icon ? (
+                <img
+                  src={user.icon}
+                  alt={`${user.name} avatar`}
+                  className="profile-avatar-img"
+                />
+              ) : (
+                user.name?.charAt(0).toUpperCase() || "U"
+              )}
+            </div>
           </div>
 
           <div className="profile-user-info">

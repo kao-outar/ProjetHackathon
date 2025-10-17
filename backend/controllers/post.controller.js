@@ -5,7 +5,9 @@ class PostController {
   // GET /api/posts/ - Get all posts
   async getAllPosts(req, res) {
     try {
-      const posts = await Post.find().populate('comments');
+      const posts = await Post.find()
+        .populate('comments')
+        .populate({ path: 'author', select: '-password -__v' });
       res.json(posts);
     } catch (err) {
       res.status(500).json({ error: err.message });
