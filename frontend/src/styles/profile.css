@@ -202,6 +202,7 @@ html, body, #root {
 
 /* === POST CARD === */
 .profile-post-card {
+  background: #f9f9f9;
   padding: 1.5rem;
   border: 2px solid #e8e8e8;
   border-radius: 10px;
@@ -627,6 +628,42 @@ html, body, #root {
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* === Onglets des posts === */
+.profile-tabs {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  justify-content: flex-start;
+}
+
+.profile-tabs button {
+  padding: 0.6rem 1.2rem;
+  background: rgba(255, 255, 255, 0.15); /* fond semi-transparent */
+  border: 2px solid white;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.profile-tabs button:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.profile-tabs button.active {
+  background: white;
+  color: #2a5298; /* texte bleu */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transform: translateY(-1px);
+}
+
+
+
 
 /* Toast de succès */
 .success-toast {

@@ -4,12 +4,7 @@ import { useEffect, useState } from "react";
 import API from "../api/axiosClient";
 import { getUserPosts, updatePost, deletePost } from "../api/post";
 import "../styles/profile.css";
-import {
-  FiEdit2,
-  FiTrash2,
-  FiSave,
-  FiX,
-} from "react-icons/fi";
+import { FiEdit2, FiTrash2 } from "react-icons/fi";
 
 export default function ProfilePage() {
   const { userId } = useParams();
@@ -21,23 +16,22 @@ export default function ProfilePage() {
   const [postsLoading, setPostsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 🔹 États pour la modification
+  // 🔹 État pour onglets
+  const [activeTab, setActiveTab] = useState("myPosts");
+
+  // 🔹 États édition et suppression
   const [editingPostId, setEditingPostId] = useState(null);
   const [editForm, setEditForm] = useState({ title: "", content: "" });
   const [editLoading, setEditLoading] = useState(false);
-
-  // 🔹 États pour la suppression
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-
-  // 🔹 État pour la notification de succès
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
-  // 🔹 Vérifie si on est sur notre propre profil
   const isOwnProfile =
     !userId || userId === currentUser?._id || userId === currentUser?.uuid;
 
+  // 🔹 Récupération des infos utilisateur
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -52,18 +46,21 @@ export default function ProfilePage() {
         setError("Failed to load profile.");
       }
     };
-
     if (!loading) fetchUser();
   }, [userId, currentUser, isOwnProfile, loading]);
 
+  // 🔹 Récupération des posts
   useEffect(() => {
     const fetchPosts = async () => {
       if (!user) return;
       try {
         setPostsLoading(true);
         const userPosts = await getUserPosts(user._id || user.id);
-        setPosts(userPosts.sort((a, b) => new Date(b.date_created) - new Date(a.date_created)));
-
+        setPosts(
+          userPosts.sort(
+            (a, b) => new Date(b.date_created) - new Date(a.date_created)
+          )
+        );
       } catch (err) {
         console.error("Post fetch error:", err);
         setError("Failed to load posts.");
@@ -74,6 +71,10 @@ export default function ProfilePage() {
     fetchPosts();
   }, [user]);
 
+  const likedPosts = posts.filter((post) =>
+    post.likes.some((u) => u._id === currentUser._id)
+  );
+
   const handleLogout = async () => {
     await logout();
     navigate("/login");
@@ -83,25 +84,17 @@ export default function ProfilePage() {
     navigate("/profile/edit");
   };
 
-  // 🔹 Démarrer l'édition
+  // 🔹 Édition post
   const handleStartEdit = (post) => {
     setEditingPostId(post._id);
     setEditForm({ title: post.title, content: post.content });
   };
-
-  // 🔹 Annuler l'édition
   const handleCancelEdit = () => {
     setEditingPostId(null);
     setEditForm({ title: "", content: "" });
   };
-
-  // 🔹 Sauvegarder les modifications
   const handleSaveEdit = async (postId) => {
-    if (!editForm.title.trim() || !editForm.content.trim()) {
-      alert("Le titre et le contenu sont requis");
-      return;
-    }
-
+    if (!editForm.title.trim() || !editForm.content.trim()) return;
     try {
       setEditLoading(true);
       const updatedPost = await updatePost(
@@ -110,51 +103,37 @@ export default function ProfilePage() {
         editForm.content,
         currentUser._id
       );
-      
-      // Mettre à jour le post dans la liste locale
-      setPosts(posts.map(p => p._id === postId ? { ...p, ...updatedPost } : p));
-      setEditingPostId(null);
-      setEditForm({ title: "", content: "" });
+      setPosts(posts.map((p) => (p._id === postId ? { ...p, ...updatedPost } : p)));
+      handleCancelEdit();
     } catch (err) {
-      console.error("Erreur lors de la modification :", err);
-      alert("Impossible de modifier le post");
+      console.error("Edit error:", err);
+      alert("Cannot edit post");
     } finally {
       setEditLoading(false);
     }
   };
 
-  // 🔹 Ouvrir la modal de suppression
+  // 🔹 Suppression post
   const handleOpenDeleteModal = (post) => {
     setPostToDelete(post);
     setDeleteModalOpen(true);
   };
-
-  // 🔹 Fermer la modal de suppression
   const handleCloseDeleteModal = () => {
     setDeleteModalOpen(false);
     setPostToDelete(null);
   };
-
-  // 🔹 Confirmer la suppression
   const handleConfirmDelete = async () => {
     if (!postToDelete) return;
-
     try {
       setDeleteLoading(true);
       await deletePost(postToDelete._id, currentUser._id);
-      
-      // Retirer le post de la liste locale
-      setPosts(posts.filter(p => p._id !== postToDelete._id));
+      setPosts(posts.filter((p) => p._id !== postToDelete._id));
       handleCloseDeleteModal();
-      
-      // Afficher la notification de succès
       setShowSuccessToast(true);
-      setTimeout(() => {
-        setShowSuccessToast(false);
-      }, 3000);
+      setTimeout(() => setShowSuccessToast(false), 3000);
     } catch (err) {
-      console.error("Erreur lors de la suppression :", err);
-      alert("Impossible de supprimer le post");
+      console.error("Delete error:", err);
+      alert("Cannot delete post");
     } finally {
       setDeleteLoading(false);
     }
@@ -223,124 +202,60 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* === USER POSTS === */}
-        <div className="profile-posts-block">
-          <h2>
-            {isOwnProfile
-              ? `My Posts (${posts.length})`
-              : `${user.name}'s Posts (${posts.length})`}
-          </h2>
+        {/* === TABS === */}
+        {isOwnProfile && (
+          <div className="profile-tabs">
+            <button
+              className={activeTab === "myPosts" ? "active" : ""}
+              onClick={() => setActiveTab("myPosts")}
+            >
+              My Posts ({posts.length})
+            </button>
+            <button
+              className={activeTab === "likedPosts" ? "active" : ""}
+              onClick={() => setActiveTab("likedPosts")}
+            >
+              Liked Posts ({likedPosts.length})
+            </button>
+          </div>
+        )}
 
+        {/* === POSTS LIST === */}
+        <div className="profile-posts-list">
           {postsLoading ? (
             <div className="profile-posts-loading">Loading posts...</div>
           ) : error ? (
             <div className="profile-posts-error">{error}</div>
-          ) : posts.length > 0 ? (
-            <div className="profile-posts-list">
-              {posts.map((post) => (
-                <div key={post._id} className="profile-post-card">
-                  {editingPostId === post._id ? (
-                    // 🔸 Mode édition
-                    <div className="profile-post-edit-form">
-                      <input
-                        type="text"
-                        className="profile-post-edit-title"
-                        value={editForm.title}
-                        onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                        placeholder="Titre"
-                        disabled={editLoading}
-                      />
-                      <textarea
-                        className="profile-post-edit-content"
-                        value={editForm.content}
-                        onChange={(e) => setEditForm({ ...editForm, content: e.target.value })}
-                        placeholder="Contenu"
-                        rows="4"
-                        disabled={editLoading}
-                      />
-                      <div className="profile-post-edit-actions">
-                        <button
-                          className="profile-post-save-btn"
-                          onClick={() => handleSaveEdit(post._id)}
-                          disabled={editLoading}
-                        >
-                          {editLoading ? "Sauvegarde..." : "Sauvegarder"}
-                        </button>
-                        <button
-                          className="profile-post-cancel-btn"
-                          onClick={handleCancelEdit}
-                          disabled={editLoading}
-                        >
-                          Annuler
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    // 🔸 Mode affichage
-                    <div className="profile-post-display">
-                      {isOwnProfile && (
-                        <button
-                          className="profile-post-delete-btn"
-                          onClick={() => handleOpenDeleteModal(post)}
-                          title="Supprimer"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="18"
-                            height="18"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                            <line x1="10" y1="11" x2="10" y2="17"></line>
-                            <line x1="14" y1="11" x2="14" y2="17"></line>
-                          </svg>
-                        </button>
-                      )}
-                      
-                      <div className="profile-post-title">{post.title}</div>
-                      <div className="profile-post-content">{post.content}</div>
-                      <div className="profile-post-date">
-                        {new Date(post.date_created).toLocaleDateString("fr-FR", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </div>
-                      
-                      {isOwnProfile && (
-                        <div className="profile-post-actions">
-                          <button
-                            className="profile-post-edit-btn"
-                            onClick={() => handleStartEdit(post)}
-                          >
-                            Modifier
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+          ) : activeTab === "myPosts" ? (
+            posts.length > 0 ? (
+              posts.map((post) => (
+                <PostCard
+                  key={post._id}
+                  post={post}
+                  isOwnProfile={isOwnProfile}
+                  editingPostId={editingPostId}
+                  editForm={editForm}
+                  editLoading={editLoading}
+                  handleStartEdit={handleStartEdit}
+                  handleCancelEdit={handleCancelEdit}
+                  handleSaveEdit={handleSaveEdit}
+                  handleOpenDeleteModal={handleOpenDeleteModal}
+                />
+              ))
+            ) : (
+              <p>You haven’t published any posts yet.</p>
+            )
+          ) : likedPosts.length > 0 ? (
+            likedPosts.map((post) => (
+              <PostCard key={post._id} post={post} isOwnProfile={isOwnProfile} />
+            ))
           ) : (
-            <div className="profile-posts-empty">
-              {isOwnProfile
-                ? "You haven’t published any posts yet."
-                : `${user.name} hasn’t published any posts yet.`}
-            </div>
+            <p>You haven’t liked any posts yet.</p>
           )}
         </div>
       </div>
 
-      {/* 🔸 Modal de confirmation de suppression */}
+      {/* === DELETE MODAL === */}
       {deleteModalOpen && (
         <div className="delete-modal-overlay" onClick={handleCloseDeleteModal}>
           <div className="delete-modal" onClick={(e) => e.stopPropagation()}>
@@ -368,7 +283,6 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* 🔸 Toast de succès */}
       {showSuccessToast && (
         <div className="success-toast">
           <svg
@@ -385,6 +299,90 @@ export default function ProfilePage() {
             <polyline points="20 6 9 17 4 12"></polyline>
           </svg>
           <span>Post supprimé avec succès</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// 🔹 Composant PostCard pour réutilisation
+function PostCard({
+  post,
+  isOwnProfile,
+  editingPostId,
+  editForm,
+  editLoading,
+  handleStartEdit,
+  handleCancelEdit,
+  handleSaveEdit,
+  handleOpenDeleteModal,
+}) {
+  const isEditing = editingPostId === post._id;
+  return (
+    <div className="profile-post-card">
+      {isEditing ? (
+        <div className="profile-post-edit-form">
+          <input
+            type="text"
+            className="profile-post-edit-title"
+            value={editForm.title}
+            onChange={(e) => (editForm.title = e.target.value)}
+            placeholder="Titre"
+            disabled={editLoading}
+          />
+          <textarea
+            className="profile-post-edit-content"
+            value={editForm.content}
+            onChange={(e) => (editForm.content = e.target.value)}
+            rows="4"
+            disabled={editLoading}
+          />
+          <div className="profile-post-edit-actions">
+            <button
+              className="profile-post-save-btn"
+              onClick={() => handleSaveEdit(post._id)}
+              disabled={editLoading}
+            >
+              {editLoading ? "Sauvegarde..." : "Sauvegarder"}
+            </button>
+            <button
+              className="profile-post-cancel-btn"
+              onClick={handleCancelEdit}
+              disabled={editLoading}
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div className="profile-post-display">
+          {isOwnProfile && handleOpenDeleteModal && (
+            <button
+              className="profile-post-delete-btn"
+              onClick={() => handleOpenDeleteModal(post)}
+            >
+              <FiTrash2 />
+            </button>
+          )}
+          <div className="profile-post-title">{post.title}</div>
+          <div className="profile-post-content">{post.content}</div>
+          <div className="profile-post-date">
+            {new Date(post.date_created).toLocaleDateString("fr-FR", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </div>
+          {isOwnProfile && handleStartEdit && (
+            <button
+              className="profile-post-edit-btn"
+              onClick={() => handleStartEdit(post)}
+            >
+              <FiEdit2 />
+            </button>
+          )}
         </div>
       )}
     </div>
