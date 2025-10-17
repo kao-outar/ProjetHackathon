@@ -1,14 +1,8 @@
 {
-    "version": 2,
-    "builds": [
+    "rewrites": [
         {
-            "src": "package.json",
-            "use": "@vercel/static-build",
-            "config": { "distDir": "dist" }
+            "source": "/api/:path*",
+            "destination": "https://hackathon-livid-eight.vercel.app/api/:path*"
         }
-    ],
-    "routes": [
-        { "handle": "filesystem" },
-        { "src": "/(.*)", "dest": "/index.html" }
     ]
 }
