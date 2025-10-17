@@ -51,7 +51,7 @@ export async function verifyToken() {
       userId
     });
     return response.data.user;
-  } catch (error) {
+  } catch {
     localStorage.removeItem('clientToken');
     localStorage.removeItem('userId');
     localStorage.removeItem('user');
@@ -70,8 +70,8 @@ export async function signout() {
         userId
       });
     }
-  } catch (error) {
-    console.error('Erreur lors de la déconnexion:', error);
+  } catch (err) {
+    console.error('Erreur lors de la déconnexion:', err);
   }
 
   // Nettoie le localStorage

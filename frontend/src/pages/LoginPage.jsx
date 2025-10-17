@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user, login, isAuthenticated } = useAuth(); // Utiliser login et isAuthenticated
+  const { login, isAuthenticated } = useAuth(); // Utiliser login et isAuthenticated
 
   // 🔒 Redirection automatique si déjà connecté
   useEffect(() => {
