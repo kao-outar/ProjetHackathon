@@ -124,7 +124,7 @@ export default function ProfilePage() {
 
             {isOwnProfile && (
               <button className="profile-edit-btn" onClick={handleEdit}>
-                Modifier le profil
+                Edit Profile
               </button>
             )}
           </div>
