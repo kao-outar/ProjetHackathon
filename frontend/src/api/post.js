@@ -36,3 +36,9 @@ export async function deletePost(postId, authorId) {
   });
   return response.data;
 }
+
+// 🧩 Liker / Unliker un post
+export const toggleLikePost = async (postId) => {
+  const res = await API.post(`/posts/${postId}/like`);
+  return res.data; // contient { message, post } comme renvoyé par le backend
+};
