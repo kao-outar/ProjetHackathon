@@ -120,7 +120,8 @@ class AuthController {
           age: user.age,
           gender: user.gender,
           date_created: user.date_created,
-          date_updated: new Date()
+          date_updated: new Date(),
+          icon: user.icon
         }
       });
     } catch (e) {
