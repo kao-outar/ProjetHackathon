@@ -17,7 +17,8 @@ export default function FeedPage() {
     async function fetchPosts() {
       try {
         const data = await getAllPosts();
-        setPosts(data);
+        setPosts(data.sort((a, b) => new Date(b.date_created) - new Date(a.date_created)));
+
       } catch (err) {
         console.error("Erreur lors du chargement des posts :", err);
       } finally {

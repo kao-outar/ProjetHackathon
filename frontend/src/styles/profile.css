@@ -9,18 +9,18 @@
 html, body, #root {
   height: 100%;
   width: 100%;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* === Conteneur principal === */
+/* === MAIN CONTAINER === */
 .profile-container {
   width: 100%;
   min-height: 100vh;
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e57c2 100%);
   padding: 2rem 1rem;
-  font-family: 'Poppins', sans-serif;
 }
 
-/* === Header === */
+/* === HEADER === */
 .profile-header {
   width: 100%;
   max-width: 800px;
@@ -45,7 +45,6 @@ html, body, #root {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: 'Poppins', sans-serif;
   text-transform: uppercase;
   font-size: 0.85rem;
 }
@@ -56,7 +55,7 @@ html, body, #root {
   transform: translateY(-2px);
 }
 
-/* === Wrapper du contenu === */
+/* === CONTENT WRAPPER === */
 .profile-content {
   width: 100%;
   max-width: 800px;
@@ -66,7 +65,7 @@ html, body, #root {
   gap: 2rem;
 }
 
-/* === Bloc Utilisateur === */
+/* === USER BLOCK === */
 .profile-user-block {
   background: white;
   border-radius: 16px;
@@ -89,19 +88,6 @@ html, body, #root {
   }
 }
 
-.profile-avatar-container {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
-  background-color: #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  color: #555;
-}
-
 .profile-avatar {
   width: 80px;
   height: 80px;
@@ -119,11 +105,7 @@ html, body, #root {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
 }
-
-
-
 
 .profile-user-info {
   flex: 1;
@@ -149,12 +131,6 @@ html, body, #root {
   font-size: 0.9rem;
 }
 
-.profile-user-meta-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
 .profile-user-meta-label {
   color: #999;
   font-weight: 500;
@@ -176,7 +152,6 @@ html, body, #root {
   color: white;
   border: none;
   border-radius: 8px;
-  font-family: 'Poppins', sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
@@ -190,7 +165,7 @@ html, body, #root {
   box-shadow: 0 10px 25px rgba(42, 82, 152, 0.3);
 }
 
-/* === Bloc Posts === */
+/* === POSTS BLOCK === */
 .profile-posts-block {
   background: white;
   border-radius: 16px;
@@ -220,22 +195,18 @@ html, body, #root {
 .profile-posts-list::-webkit-scrollbar {
   width: 8px;
 }
-
-.profile-posts-list::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
 .profile-posts-list::-webkit-scrollbar-thumb {
   background: #2a5298;
   border-radius: 10px;
 }
 
+/* === POST CARD === */
 .profile-post-card {
   padding: 1.5rem;
   border: 2px solid #e8e8e8;
   border-radius: 10px;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .profile-post-card:hover {
@@ -261,8 +232,93 @@ html, body, #root {
   font-size: 0.8rem;
   color: #999;
   font-weight: 500;
+  text-align: right;
 }
 
+/* === ICON BUTTONS === */
+.profile-post-icons {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.6rem;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+  transform: scale(1.2);
+}
+
+.icon-btn.edit:hover {
+  color: #2563eb;
+}
+
+.icon-btn.delete:hover {
+  color: #dc2626;
+}
+
+/* === EDIT MODE === */
+.profile-edit-title,
+.profile-edit-content {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.profile-edit-content {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.profile-post-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.profile-post-actions button {
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.3s ease;
+}
+
+.save-btn {
+  background-color: #2563eb;
+  color: white;
+}
+.save-btn:hover {
+  background-color: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+.cancel-btn {
+  background-color: #e5e7eb;
+  color: #333;
+}
+.cancel-btn:hover {
+  background-color: #d1d5db;
+  transform: translateY(-2px);
+}
+
+/* === EMPTY & ERROR === */
 .profile-posts-empty {
   text-align: center;
   padding: 2rem;
@@ -270,7 +326,18 @@ html, body, #root {
   font-style: italic;
 }
 
-/* === État de chargement === */
+.profile-error {
+  background: #ffebee;
+  color: #c62828;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border-left: 5px solid #c62828;
+  font-weight: 500;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* === LOADING === */
 .profile-loading {
   color: white;
   font-size: 1.2rem;
@@ -284,19 +351,7 @@ html, body, #root {
   50% { opacity: 0.5; }
 }
 
-/* === Message d'erreur === */
-.profile-error {
-  background: #ffebee;
-  color: #c62828;
-  padding: 1.5rem;
-  border-radius: 8px;
-  border-left: 5px solid #c62828;
-  font-weight: 500;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-/* === Responsive === */
+/* === RESPONSIVE === */
 @media (max-width: 768px) {
   .profile-user-block {
     flex-direction: column;

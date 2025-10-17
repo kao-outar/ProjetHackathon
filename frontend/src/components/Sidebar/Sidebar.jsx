@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiSearch, FiUser, FiLogOut, FiHome, FiUsers } from 'react-icons/fi';
 import './Sidebar.css';
-import viteLogo from '/vite.svg';
+import logo from '../../assets/logo.png';
 import { useAuth } from '../../hooks/useAuth';
 
 const Sidebar = () => {
@@ -24,7 +24,7 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <div className="sidebar-header">
-        <img src={viteLogo} alt="Logo" className="logo" />
+        <img src={logo} alt="Logo" className="logo" />
       </div>
       <form onSubmit={handleSearch} className="search-bar">
         <FiSearch className="search-icon" />
