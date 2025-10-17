@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { signin } from "../api/auth";
@@ -12,7 +12,12 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { user, setUser } = useAuth();
+
+  // 🔒 Redirection automatique si déjà connecté
+  useEffect(() => {
+    if (user) navigate("/feed");
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,18 +38,18 @@ export default function LoginPage() {
 
     try {
       const data = await signin(email, password);
+      console.log("✅ Réponse du backend :", data);
       setUser(data.user);
-      navigate("/profile");
+      navigate("/feed");
     } catch (err) {
-      setError(err.response?.data?.error || "Incorrect email or password");
+        console.log("Erreur API:", err.response?.data); // 👈 utile pour déboguer
+        setError(err.response?.data?.error || "Erreur de connexion");
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+  }
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   return (
     <div className="auth-container">

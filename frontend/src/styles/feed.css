@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+.feed-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e57c2 100%);
+  padding: 2rem 1rem;
+  font-family: 'Poppins', sans-serif;
+}
+
+.feed-header {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.feed-header h1 {
+  color: white;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.feed-profile-btn {
+  padding: 0.8rem 1.5rem;
+  background: white;
+  color: #2a5298;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Poppins', sans-serif;
+}
+
+.feed-profile-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.feed-content {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.feed-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.feed-post-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.8rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #f0f0f0;
+}
+
+.feed-post-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  border-color: #e0e0e0;
+}
+
+.feed-post-header {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.feed-post-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2a5298 0%, #1e3c72 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.feed-post-avatar:hover {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(42, 82, 152, 0.3);
+}
+
+.feed-post-user-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.feed-post-username {
+  font-weight: 600;
+  color: #1e3c72;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.feed-post-username:hover {
+  color: #2a5298;
+  text-decoration: underline;
+}
+
+.feed-post-date {
+  font-size: 0.8rem;
+  color: #999;
+  font-weight: 500;
+}
+
+.feed-post-content {
+  margin-bottom: 1.2rem;
+  line-height: 1.6;
+}
+
+.feed-post-content h3 {
+  margin: 0 0 0.6rem 0;
+  font-size: 1.15rem;
+  color: #1e1e1e;
+  font-weight: 700;
+}
+
+.feed-post-content p {
+  margin: 0;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.feed-post-actions {
+  display: flex;
+  gap: 0.8rem;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 1rem;
+  margin-top: 1rem;
+}
+
+.feed-action-btn {
+  flex: 1;
+  padding: 0.7rem 1rem;
+  background: #f8f9fb;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  color: #555;
+}
+
+.feed-action-btn:hover {
+  background: #2a5298;
+  color: white;
+  border-color: #2a5298;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(42, 82, 152, 0.2);
+}
+
+.feed-action-btn:active {
+  transform: translateY(0);
+}
+
+.feed-posts {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.feed-empty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
+  padding: 4rem 2rem;
+  font-size: 1.1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  margin: 2rem 0;
+}
+
+.feed-loading {
+  text-align: center;
+  color: white;
+  padding: 4rem 1rem;
+  font-size: 1.1rem;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 700px) {
+  .feed-post-card {
+    padding: 1.2rem;
+  }
+
+  .feed-post-content h3 {
+    font-size: 1.05rem;
+  }
+
+  .feed-post-actions {
+    gap: 0.5rem;
+  }
+
+  .feed-action-btn {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+  }
+}

@@ -6,6 +6,7 @@ import UsersPage from "./pages/UsersPage";
 import Register from "./pages/Register";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import PublicRoute from "./components/Auth/PublicRoute";
+import FeedPage from "./pages/FeedPage";
 
 function App() {
   return (
@@ -42,6 +43,18 @@ function App() {
               <ProtectedRoute>
                 <UsersPage />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/feed"
+            element={<ProtectedRoute><FeedPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/"
+            element={
+              <PublicRoute>
+                <LoginPage />
+              </PublicRoute>
             }
           />
         </Routes>

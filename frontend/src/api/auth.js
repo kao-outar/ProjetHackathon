@@ -20,15 +20,17 @@ export async function signup(email, password, name, age, gender) {
 
 export async function signin(email, password) {
   const clientToken = generateClientToken();
-  
+
   const response = await API.post("/auth/signin", {
     email,
     password,
     clientToken
   });
 
-  // Stocke le token et l'UUID
+  // ✅ Stocker l'objet complet user retourné par le backend
   localStorage.setItem('clientToken', clientToken);
+
+  // On garde l'id pour les headers auth
   localStorage.setItem('userId', response.data.user.id);
   localStorage.setItem('user', JSON.stringify(response.data.user));
 
@@ -44,13 +46,16 @@ export async function verifyToken() {
   }
 
   try {
-    const response = await API.post("/auth/verify", { clientToken, userId });
-    return response.data.user;  // ✅ Retourne l'user
+    const response = await API.post("/auth/verify", {
+      clientToken,
+      userId
+    });
+    return response.data.user;
   } catch (error) {
     localStorage.removeItem('clientToken');
     localStorage.removeItem('userId');
     localStorage.removeItem('user');
-    return null;  // ✅ Retourne null si erreur
+    return null;
   }
 }
 
