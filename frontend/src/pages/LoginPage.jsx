@@ -12,12 +12,12 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
+  const { user, login, isAuthenticated } = useAuth(); // Utiliser login et isAuthenticated
 
   // 🔒 Redirection automatique si déjà connecté
   useEffect(() => {
-    if (user) navigate("/feed");
-  }, [user, navigate]);
+    if (isAuthenticated) navigate("/feed"); // Utiliser isAuthenticated
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,7 +39,7 @@ export default function LoginPage() {
     try {
       const data = await signin(email, password);
       console.log("✅ Réponse du backend :", data);
-      setUser(data.user);
+      login(data); // Utiliser la fonction login du contexte
       navigate("/feed");
     } catch (err) {
         console.log("Erreur API:", err.response?.data); // 👈 utile pour déboguer
