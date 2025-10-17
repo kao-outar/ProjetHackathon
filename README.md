@@ -4,6 +4,7 @@ A complete mini social network built during the **Hackathon October 2025**, usin
 The project demonstrates secure authentication, API communication, and deployment with **Vercel** and **GitHub Actions**.
 
 You can access the app here: [projet-hackathon-nine.vercel.app](https://projet-hackathon-nine.vercel.app)
+
 ---
 
 ## 🚀 Overview
