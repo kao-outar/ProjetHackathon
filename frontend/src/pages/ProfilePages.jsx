@@ -1,12 +1,15 @@
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { getUserPosts } from "../api/post";
 import "../styles/profile.css";
 
 export default function ProfilePages() {
   const { user, loading, logout } = useAuth();
   const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
+  const [postsLoading, setPostsLoading] = useState(true);
+  const [postsError, setPostsError] = useState(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -15,22 +18,24 @@ export default function ProfilePages() {
   }, [user, loading, navigate]);
 
   useEffect(() => {
-    if (user) {
-      setPosts([
-        {
-          id: 1,
-          title: "Mon premier post",
-          content: "Ceci est mon premier post sur le réseau social.",
-          date: new Date("2025-10-14"),
-        },
-        {
-          id: 2,
-          title: "Un autre post",
-          content: "Voici un autre contenu que j'ai publié.",
-          date: new Date("2025-10-15"),
-        },
-      ]);
-    }
+    const fetchUserPosts = async () => {
+      if (user && user.id) {
+        try {
+          setPostsLoading(true);
+          setPostsError(null);
+          const userPosts = await getUserPosts(user.id);
+          setPosts(userPosts);
+        } catch (error) {
+          console.error("Erreur lors du chargement des posts:", error);
+          setPostsError("Impossible de charger les posts");
+          setPosts([]);
+        } finally {
+          setPostsLoading(false);
+        }
+      }
+    };
+
+    fetchUserPosts();
   }, [user]);
 
   const handleLogout = async () => {
@@ -108,14 +113,28 @@ export default function ProfilePages() {
         <div className="profile-posts-block">
           <h2>Mes Posts ({posts.length})</h2>
 
-          {posts.length > 0 ? (
+          {postsLoading ? (
+            <div className="profile-posts-loading">
+              Chargement des posts...
+            </div>
+          ) : postsError ? (
+            <div className="profile-posts-error">
+              {postsError}
+            </div>
+          ) : posts.length > 0 ? (
             <div className="profile-posts-list">
               {posts.map((post) => (
-                <div key={post.id} className="profile-post-card">
+                <div key={post._id} className="profile-post-card">
                   <div className="profile-post-title">{post.title}</div>
                   <div className="profile-post-content">{post.content}</div>
                   <div className="profile-post-date">
-                    {post.date.toLocaleDateString("fr-FR")}
+                    {new Date(post.date_created).toLocaleDateString("fr-FR", {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })}
                   </div>
                 </div>
               ))}
