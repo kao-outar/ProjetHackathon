@@ -15,7 +15,7 @@ Team :
 Pierric Letard,
 Kaoutar Arare,
 Mahmut-Ali TOPAL,
-XXXXXXX XXXXXXX
+Killian Barbarin
 
 ---
 
