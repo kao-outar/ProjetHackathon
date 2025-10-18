@@ -50,6 +50,7 @@ class AuthController {
           name: user.name,
           age: user.age,
           gender: user.gender,
+          role: user.role,
           date_created: user.date_created,
           date_updated: user.date_updated,
           icon: user.icon
@@ -119,6 +120,7 @@ class AuthController {
           name: user.name,
           age: user.age,
           gender: user.gender,
+          role: user.role,
           date_created: user.date_created,
           date_updated: new Date(),
           icon: user.icon
@@ -211,6 +213,7 @@ class AuthController {
           name: user.name,
           age: user.age,
           gender: user.gender,
+          role: user.role,
           date_created: user.date_created,
           date_updated: user.date_updated
         }

@@ -47,6 +47,17 @@
   transition: background-color 0.3s;
 }
 
+.nav-item-admin {
+  background-color: rgba(42, 82, 152, 0.1);
+  border-left: 4px solid #2a5298;
+  color: #2a5298;
+  font-weight: 600;
+}
+
+.nav-item-admin:hover {
+  background-color: rgba(42, 82, 152, 0.2);
+}
+
 .search-bar input::placeholder {
   color: #8899a6;
 }
@@ -105,4 +116,95 @@
 
 .logout-button:hover {
   background-color: #2c466b;
+}
+/* --- Responsive Sidebar (≤768px) --- */
+@media (max-width: 768px) {
+  /* Sidebar cachée par défaut sur mobile */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 240px;
+    height: 100vh;
+    background-color: #1a2c4a;
+    z-index: 1000;
+    transition: left 0.3s ease;
+    padding: 20px 15px;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  /* Bouton hamburger */
+  .sidebar-toggle {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1101;
+    background-color: #1a2c4a;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .sidebar-toggle:hover {
+    background-color: #2a5298;
+  }
+
+  /* Overlay sombre derrière la sidebar */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .sidebar-overlay.show {
+    display: block;
+    opacity: 1;
+  }
+
+  /* Ajustements internes */
+  .search-bar {
+    display: none;
+  }
+
+  .logo {
+    width: 50px;
+    height: 50px;
+  }
+
+  .nav-item {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .logout-button {
+    padding: 12px;
+    font-size: 16px;
+  }
+}
+
+/* --- Ultra mobile (≤480px) --- */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 200px;
+    padding: 15px 10px;
+  }
+
+  .sidebar-toggle {
+    font-size: 1.5rem;
+    padding: 6px 10px;
+  }
 }
