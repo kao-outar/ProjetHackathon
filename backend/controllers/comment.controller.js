@@ -31,6 +31,9 @@ class CommentController {
         date_updated: new Date(),
       });
       await Post.findByIdAndUpdate(postId, { $push: { comments: comment._id } });
+      
+      // Populate author before returning
+      await comment.populate({ path: 'author', select: '-password -__v' });
       res.status(201).json(comment);
     } catch (err) {
       res.status(500).json({ error: err.message });
@@ -53,7 +56,7 @@ class CommentController {
     const { commentId } = req.params;
     const { content } = req.body;
     try {
-      const comment = await Comment.findById(commentId).populate({ path: 'author', select: '-password -__v' });
+      const comment = await Comment.findById(commentId);
       if (!comment) {
         return res.status(404).json({ error: 'Commentaire non trouvé' });
       }
@@ -63,6 +66,9 @@ class CommentController {
       if (content !== undefined) comment.content = content;
       comment.date_updated = new Date();
       await comment.save();
+      
+      // Populate author before returning
+      await comment.populate({ path: 'author', select: '-password -__v' });
       res.json(comment);
     } catch (err) {
       res.status(500).json({ error: err.message });

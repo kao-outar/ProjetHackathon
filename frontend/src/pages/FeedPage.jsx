@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { getAllPosts, toggleLikePost } from "../api/post";
+import { getCommentsByPost, createComment, deleteComment } from "../api/comment";
 import CreatePostModal from "../components/post/CreatePostModal";
 import "../styles/feed.css";
 
@@ -12,6 +13,10 @@ export default function FeedPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [commentsVisible, setCommentsVisible] = useState({});
+  const [comments, setComments] = useState({});
+  const [newComment, setNewComment] = useState({});
+  const [loadingComments, setLoadingComments] = useState({});
 
   useEffect(() => {
     async function fetchPosts() {
@@ -50,6 +55,80 @@ export default function FeedPage() {
       setPosts(posts.map((p) => (p._id === postId ? updatedPost : p)));
     } catch (err) {
       console.error("Error while liking post:", err);
+    }
+  };
+
+  // 🔹 Toggle comments visibility and load comments
+  const toggleComments = async (postId) => {
+    const isVisible = commentsVisible[postId];
+    
+    if (!isVisible) {
+      // Load comments if not already loaded
+      if (!comments[postId]) {
+        setLoadingComments({ ...loadingComments, [postId]: true });
+        try {
+          const postComments = await getCommentsByPost(postId);
+          setComments({ ...comments, [postId]: postComments });
+        } catch (err) {
+          console.error("Error loading comments:", err);
+        } finally {
+          setLoadingComments({ ...loadingComments, [postId]: false });
+        }
+      }
+    }
+    
+    setCommentsVisible({ ...commentsVisible, [postId]: !isVisible });
+  };
+
+  // 🔹 Add a comment
+  const handleAddComment = async (postId) => {
+    const content = newComment[postId]?.trim();
+    if (!content) return;
+
+    try {
+      const comment = await createComment(postId, content);
+      
+      // Update comments list
+      setComments({
+        ...comments,
+        [postId]: [...(comments[postId] || []), comment]
+      });
+      
+      // Clear input
+      setNewComment({ ...newComment, [postId]: "" });
+      
+      // Update post comments count
+      setPosts(posts.map((p) => {
+        if (p._id === postId) {
+          return { ...p, comments: [...p.comments, comment._id] };
+        }
+        return p;
+      }));
+    } catch (err) {
+      console.error("Error adding comment:", err);
+    }
+  };
+
+  // 🔹 Delete a comment
+  const handleDeleteComment = async (postId, commentId) => {
+    try {
+      await deleteComment(commentId);
+      
+      // Update comments list
+      setComments({
+        ...comments,
+        [postId]: comments[postId].filter((c) => c._id !== commentId)
+      });
+      
+      // Update post comments count
+      setPosts(posts.map((p) => {
+        if (p._id === postId) {
+          return { ...p, comments: p.comments.filter((id) => id !== commentId) };
+        }
+        return p;
+      }));
+    } catch (err) {
+      console.error("Error deleting comment:", err);
     }
   };
 
@@ -135,8 +214,113 @@ export default function FeedPage() {
                     >
                       👍 Like ({post.likes.length})
                     </button>
-                    <button className="feed-action-btn">💬 Comment</button>
+                    <button 
+                      className="feed-action-btn"
+                      onClick={() => toggleComments(post._id)}
+                    >
+                      💬 Comment ({post.comments.length})
+                    </button>
                   </div>
+
+                  {/* Section des commentaires */}
+                  {commentsVisible[post._id] && (
+                    <div className="feed-comments-section">
+                      {loadingComments[post._id] ? (
+                        <div className="feed-comments-loading">Loading comments...</div>
+                      ) : (
+                        <>
+                          {/* Liste des commentaires */}
+                          <div className="feed-comments-list">
+                            {comments[post._id] && comments[post._id].length > 0 ? (
+                              comments[post._id].map((comment) => (
+                                <div key={comment._id} className="feed-comment">
+                                  <div className="feed-comment-header">
+                                    <div
+                                      className="feed-comment-avatar"
+                                      onClick={() => handleUserClick(comment.author._id)}
+                                    >
+                                      {comment.author?.icon ? (
+                                        <img
+                                          src={comment.author.icon}
+                                          alt={comment.author.name}
+                                          className="feed-comment-avatar-img"
+                                        />
+                                      ) : (
+                                        comment.author?.name?.charAt(0).toUpperCase() || "U"
+                                      )}
+                                    </div>
+                                    <div className="feed-comment-info">
+                                      <div
+                                        className="feed-comment-username"
+                                        onClick={() => handleUserClick(comment.author._id)}
+                                      >
+                                        {comment.author?.name}
+                                      </div>
+                                      <div className="feed-comment-date">
+                                        {new Date(comment.date_created).toLocaleDateString("en-US", {
+                                          year: "numeric",
+                                          month: "short",
+                                          day: "numeric",
+                                          hour: "2-digit",
+                                          minute: "2-digit",
+                                        })}
+                                      </div>
+                                    </div>
+                                    {user && comment.author._id === user._id && (
+                                      <button
+                                        className="feed-comment-delete"
+                                        onClick={() => handleDeleteComment(post._id, comment._id)}
+                                        title="Supprimer le commentaire"
+                                      >
+                                        🗑️
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div className="feed-comment-content">
+                                    {comment.content}
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <div className="feed-comments-empty">
+                                Aucun commentaire pour le moment
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Formulaire d'ajout de commentaire */}
+                          {user && (
+                            <div className="feed-comment-form">
+                              <input
+                                type="text"
+                                placeholder="Ajouter un commentaire..."
+                                value={newComment[post._id] || ""}
+                                onChange={(e) =>
+                                  setNewComment({
+                                    ...newComment,
+                                    [post._id]: e.target.value,
+                                  })
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    handleAddComment(post._id);
+                                  }
+                                }}
+                                className="feed-comment-input"
+                              />
+                              <button
+                                onClick={() => handleAddComment(post._id)}
+                                className="feed-comment-submit"
+                                disabled={!newComment[post._id]?.trim()}
+                              >
+                                Envoyer
+                              </button>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })}
