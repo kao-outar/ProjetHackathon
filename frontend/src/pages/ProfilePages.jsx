@@ -3,7 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
 import API from "../api/axiosClient";
 import { getUserPosts, updatePost, deletePost } from "../api/post";
-import { getCommentsByPost, createComment, deleteComment } from "../api/comment";
+import { getCommentsByPost, createComment, deleteComment, updateComment } from "../api/comment";
 import "../styles/profile.css";
 import {
   FiEdit2,
@@ -40,6 +40,8 @@ export default function ProfilePage() {
   const [comments, setComments] = useState({});
   const [newComment, setNewComment] = useState({});
   const [loadingComments, setLoadingComments] = useState({});
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editCommentContent, setEditCommentContent] = useState("");
 
   // 🔹 Vérifie si on est sur notre propre profil
   const isOwnProfile =
@@ -261,6 +263,42 @@ export default function ProfilePage() {
     return userId && authorId && userId.toString() === authorId.toString();
   };
 
+  // 🔹 Start editing a comment
+  const handleStartEditComment = (comment) => {
+    setEditingCommentId(comment._id);
+    setEditCommentContent(comment.content);
+  };
+
+  // 🔹 Cancel editing a comment
+  const handleCancelEditComment = () => {
+    setEditingCommentId(null);
+    setEditCommentContent("");
+  };
+
+  // 🔹 Save edited comment
+  const handleSaveEditComment = async (postId, commentId) => {
+    const content = editCommentContent.trim();
+    if (!content) return;
+
+    try {
+      const updatedComment = await updateComment(commentId, content);
+      
+      // Update comments list
+      setComments({
+        ...comments,
+        [postId]: comments[postId].map((c) => 
+          c._id === commentId ? updatedComment : c
+        )
+      });
+      
+      // Reset editing state
+      setEditingCommentId(null);
+      setEditCommentContent("");
+    } catch (err) {
+      console.error("Error updating comment:", err);
+    }
+  };
+
   if (loading || !user) {
     return (
       <div className="profile-container">
@@ -445,66 +483,118 @@ export default function ProfilePage() {
                                 {comments[post._id] && comments[post._id].length > 0 ? (
                                   comments[post._id].map((comment) => (
                                     <div key={comment._id} className="profile-comment">
-                                      <div className="profile-comment-header">
-                                        <div
-                                          className="profile-comment-avatar"
-                                          onClick={() => handleUserClick(comment.author._id)}
-                                        >
-                                          {comment.author?.icon ? (
-                                            <img
-                                              src={comment.author.icon}
-                                              alt={comment.author.name}
-                                              className="profile-comment-avatar-img"
-                                            />
-                                          ) : (
-                                            comment.author?.name?.charAt(0).toUpperCase() || "U"
-                                          )}
-                                        </div>
-                                        <div className="profile-comment-info">
-                                          <div
-                                            className="profile-comment-username"
-                                            onClick={() => handleUserClick(comment.author._id)}
-                                          >
-                                            {comment.author?.name}
-                                          </div>
-                                          <div className="profile-comment-date">
-                                            {new Date(comment.date_created).toLocaleDateString("fr-FR", {
-                                              year: "numeric",
-                                              month: "short",
-                                              day: "numeric",
-                                              hour: "2-digit",
-                                              minute: "2-digit",
-                                            })}
-                                          </div>
-                                        </div>
-                                        {isCommentOwner(comment) && (
-                                          <button
-                                            className="profile-comment-delete"
-                                            onClick={() => handleDeleteComment(post._id, comment._id)}
-                                            title="Supprimer le commentaire"
-                                          >
-                                            <svg
-                                              xmlns="http://www.w3.org/2000/svg"
-                                              width="16"
-                                              height="16"
-                                              viewBox="0 0 24 24"
-                                              fill="none"
-                                              stroke="currentColor"
-                                              strokeWidth="2"
-                                              strokeLinecap="round"
-                                              strokeLinejoin="round"
+                                      {editingCommentId === comment._id ? (
+                                        // Mode édition
+                                        <div className="profile-comment-edit-form">
+                                          <textarea
+                                            className="profile-comment-edit-input"
+                                            value={editCommentContent}
+                                            onChange={(e) => setEditCommentContent(e.target.value)}
+                                            rows="3"
+                                            autoFocus
+                                          />
+                                          <div className="profile-comment-edit-actions">
+                                            <button
+                                              className="profile-comment-save-btn"
+                                              onClick={() => handleSaveEditComment(post._id, comment._id)}
                                             >
-                                              <polyline points="3 6 5 6 21 6"></polyline>
-                                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                              <line x1="10" y1="11" x2="10" y2="17"></line>
-                                              <line x1="14" y1="11" x2="14" y2="17"></line>
-                                            </svg>
-                                          </button>
-                                        )}
-                                      </div>
-                                      <div className="profile-comment-content">
-                                        {comment.content}
-                                      </div>
+                                              Sauvegarder
+                                            </button>
+                                            <button
+                                              className="profile-comment-cancel-btn"
+                                              onClick={handleCancelEditComment}
+                                            >
+                                              Annuler
+                                            </button>
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        // Mode affichage
+                                        <>
+                                          <div className="profile-comment-header">
+                                            <div
+                                              className="profile-comment-avatar"
+                                              onClick={() => handleUserClick(comment.author._id)}
+                                            >
+                                              {comment.author?.icon ? (
+                                                <img
+                                                  src={comment.author.icon}
+                                                  alt={comment.author.name}
+                                                  className="profile-comment-avatar-img"
+                                                />
+                                              ) : (
+                                                comment.author?.name?.charAt(0).toUpperCase() || "U"
+                                              )}
+                                            </div>
+                                            <div className="profile-comment-info">
+                                              <div
+                                                className="profile-comment-username"
+                                                onClick={() => handleUserClick(comment.author._id)}
+                                              >
+                                                {comment.author?.name}
+                                              </div>
+                                              <div className="profile-comment-date">
+                                                {new Date(comment.date_created).toLocaleDateString("fr-FR", {
+                                                  year: "numeric",
+                                                  month: "short",
+                                                  day: "numeric",
+                                                  hour: "2-digit",
+                                                  minute: "2-digit",
+                                                })}
+                                              </div>
+                                            </div>
+                                            {isCommentOwner(comment) && (
+                                              <div className="profile-comment-actions">
+                                                <button
+                                                  className="profile-comment-edit"
+                                                  onClick={() => handleStartEditComment(comment)}
+                                                  title="Modifier le commentaire"
+                                                >
+                                                  <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                  >
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                                  </svg>
+                                                </button>
+                                                <button
+                                                  className="profile-comment-delete"
+                                                  onClick={() => handleDeleteComment(post._id, comment._id)}
+                                                  title="Supprimer le commentaire"
+                                                >
+                                                  <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="16"
+                                                    height="16"
+                                                    viewBox="0 0 24 24"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                  >
+                                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                                  </svg>
+                                                </button>
+                                              </div>
+                                            )}
+                                          </div>
+                                          <div className="profile-comment-content">
+                                            {comment.content}
+                                          </div>
+                                        </>
+                                      )}
                                     </div>
                                   ))
                                 ) : (
