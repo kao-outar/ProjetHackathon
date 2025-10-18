@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import API from "../api/axiosClient";
+import "../styles/users-page.css";
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
@@ -13,21 +14,19 @@ export default function UsersPage() {
         const res = await API.get("/users");
         setUsers(res.data.users || []);
       } catch (err) {
-        console.error("❌ Erreur API :", err);
-        setError("Impossible de récupérer les utilisateurs");
+        console.error("❌ API Error:", err);
+        setError("Unable to fetch users.");
       } finally {
         setLoading(false);
       }
     }
-
     fetchUsers();
   }, []);
 
-  if (loading) return <p>Chargement...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p className="users-error">{error}</p>;
 
-  // Filter users based on search query
-  const filteredUsers = users.filter(user => {
+  const filteredUsers = users.filter((user) => {
     const query = searchQuery.toLowerCase();
     return (
       user.name?.toLowerCase().includes(query) ||
@@ -36,74 +35,55 @@ export default function UsersPage() {
   });
 
   return (
-    <div style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
-      <h2>Liste des utilisateurs</h2>
-      
-      {/* Search input */}
+    <div className="users-container">
+      <h2>User List</h2>
+
       <input
         type="text"
-        placeholder="Rechercher par nom ou email..."
+        className="users-search-input"
+        placeholder="Search by name or email..."
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "10px 15px",
-          marginBottom: 20,
-          fontSize: 16,
-          border: "2px solid #ddd",
-          borderRadius: 8,
-          outline: "none",
-          transition: "border-color 0.3s"
-        }}
-        onFocus={(e) => e.target.style.borderColor = "#4CAF50"}
-        onBlur={(e) => e.target.style.borderColor = "#ddd"}
       />
 
-      <ul style={{ display: "flex", flexDirection: "column", gap: 15, padding: 0 }}>
+      <ul className="users-list">
         {filteredUsers.length > 0 ? (
-          filteredUsers.map(user => (
-            <div className="profile-user-block">
-          <div className="profile-avatar-container">
-            <div className="profile-avatar">
-              {user.icon ? (
-                <img
-                  src={user.icon}
-                  alt={`${user.name} avatar`}
-                  className="profile-avatar-img"
-                />
-              ) : (
-                user.name?.charAt(0).toUpperCase() || "U"
-              )}
-            </div>
-          </div>
+          filteredUsers.map((user) => (
+            <li key={user._id} className="user-card">
+              <div className="user-avatar">
+                {user.icon ? (
+                  <img src={user.icon} alt={`${user.name} avatar`} />
+                ) : (
+                  user.name?.charAt(0).toUpperCase() || "U"
+                )}
+              </div>
 
-          <div className="profile-user-info">
-            <div className="profile-user-name">{user.name}</div>
-            <div className="profile-user-email">{user.email}</div>
-            
-            <div className="profile-user-meta">
-              <div className="profile-user-meta-item">
-                <div className="profile-user-meta-label">Âge</div>
-                <div className="profile-user-meta-value">
-                  {user.age ? `${user.age} ans` : "Non renseigné"}
+              <div className="user-info">
+                <div className="user-name">{user.name}</div>
+                <div className="user-email">{user.email}</div>
+
+                <div className="user-meta">
+                  <div className="user-meta-item">
+                    <div className="user-meta-label">Age</div>
+                    <div className="user-meta-value">
+                      {user.age ? `${user.age} years` : "Not provided"}
+                    </div>
+                  </div>
+                  <div className="user-meta-item">
+                    <div className="user-meta-label">Gender</div>
+                    <div className="user-meta-value">
+                      {user.gender || "Not provided"}
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="profile-user-meta-item">
-                <div className="profile-user-meta-label">Genre</div>
-                <div className="profile-user-meta-value">
-                  {user.gender || "Non renseigné"}
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
+            </li>
           ))
         ) : (
-          <p>
-            {searchQuery 
-              ? `Aucun utilisateur trouvé pour "${searchQuery}".` 
-              : "Aucun utilisateur trouvé."}
+          <p className="users-empty">
+            {searchQuery
+              ? `No users found for "${searchQuery}".`
+              : "No users found."}
           </p>
         )}
       </ul>

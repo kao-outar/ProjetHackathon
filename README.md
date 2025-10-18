@@ -69,9 +69,13 @@ XXXXXXX XXXXXXX
 │
 ├── /frontend
 │   ├── /src
+│   │   ├── /api
+│   │   ├── /assets
 │   │   ├── /pages
 │   │   ├── /components
-│   │   ├── /api
+│   │   ├── /context
+│   │   ├── /hooks
+│   │   ├── /styles
 │   │   └── /utils
 │   └── package.json
 │
@@ -92,7 +96,7 @@ XXXXXXX XXXXXXX
 
 ### Base URL
 ```
-Production: https://hackathon-livid-eight.vercel.app/api
+Production: https://projet-hackathon-z48d.vercel.app/api
 Local: http://localhost:3000/api
 ```
 
@@ -497,6 +501,66 @@ x-user-id: <your-user-id>
 - `403 Forbidden` - Not authorized (not the author)
 - `401 Unauthorized` - Missing or invalid authentication
 
+---
+
+## ❤️ Like Routes
+
+### POST /api/posts/:postId/like  
+Toggle (add/remove) a like on a post (requires authentication).
+
+**Headers Required:**
+```
+x-client-token: <your-client-token>
+x-user-id: <your-user-id>
+```
+
+
+**Response – Post liked (200 OK):**
+```json
+{
+  "message": "Post liked",
+  "post": {
+    "_id": "6711b38a73e8b7c5e4b0f9a9",
+    "title": "My First Post",
+    "content": "Hello world!",
+    "author": {
+      "_id": "507f1f77bcf86cd799439012",
+      "name": "John Doe"
+    },
+    "likes": [
+      {
+        "_id": "507f1f77bcf86cd799439011",
+        "name": "Jane Smith"
+      }
+    ],
+    "date_created": "2025-10-17T09:00:00.000Z",
+    "date_updated": "2025-10-17T09:10:00.000Z"
+  }
+}
+```
+**Response – Post unliked (200 OK):**
+```json
+{
+  "message": "Post unliked",
+  "post": {
+    "_id": "6711b38a73e8b7c5e4b0f9a9",
+    "title": "My First Post",
+    "content": "Hello world!",
+    "author": {
+      "_id": "507f1f77bcf86cd799439012",
+      "name": "John Doe"
+    },
+    "likes": [],
+    "date_created": "2025-10-17T09:00:00.000Z",
+    "date_updated": "2025-10-17T09:10:00.000Z"
+  }
+}
+
+```
+**Error Responses:**
+- `404 Not Found` – Post not found
+- `401 Unauthorized` – Missing or invalid authentication
+- `500 Internal Server Error` – Server or database error
 ---
 
 ## 💬 Comment Routes
