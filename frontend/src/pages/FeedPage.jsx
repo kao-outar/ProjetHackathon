@@ -100,7 +100,7 @@ export default function FeedPage() {
       // Update post comments count
       setPosts(posts.map((p) => {
         if (p._id === postId) {
-          return { ...p, comments: [...p.comments, comment._id] };
+          return { ...p, comments: [...(p.comments || []), comment._id] };
         }
         return p;
       }));
@@ -123,13 +123,23 @@ export default function FeedPage() {
       // Update post comments count
       setPosts(posts.map((p) => {
         if (p._id === postId) {
-          return { ...p, comments: p.comments.filter((id) => id !== commentId) };
+          return { ...p, comments: (p.comments || []).filter((id) => id !== commentId) };
         }
         return p;
       }));
     } catch (err) {
       console.error("Error deleting comment:", err);
     }
+  };
+
+  // 🔹 Check if user owns the comment
+  const isCommentOwner = (comment) => {
+    if (!user || !comment || !comment.author) return false;
+    
+    const userId = user._id || user.id;
+    const authorId = comment.author._id || comment.author.id;
+    
+    return userId && authorId && userId.toString() === authorId.toString();
   };
 
   if (authLoading || loading) {
@@ -218,7 +228,7 @@ export default function FeedPage() {
                       className="feed-action-btn"
                       onClick={() => toggleComments(post._id)}
                     >
-                      💬 Comment ({post.comments.length})
+                      💬 Comment ({comments[post._id]?.length || post.comments?.length || 0})
                     </button>
                   </div>
 
@@ -266,13 +276,28 @@ export default function FeedPage() {
                                         })}
                                       </div>
                                     </div>
-                                    {user && comment.author._id === user._id && (
+                                    {isCommentOwner(comment) && (
                                       <button
                                         className="feed-comment-delete"
                                         onClick={() => handleDeleteComment(post._id, comment._id)}
                                         title="Supprimer le commentaire"
                                       >
-                                        🗑️
+                                        <svg
+                                          xmlns="http://www.w3.org/2000/svg"
+                                          width="16"
+                                          height="16"
+                                          viewBox="0 0 24 24"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          strokeWidth="2"
+                                          strokeLinecap="round"
+                                          strokeLinejoin="round"
+                                        >
+                                          <polyline points="3 6 5 6 21 6"></polyline>
+                                          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                          <line x1="10" y1="11" x2="10" y2="17"></line>
+                                          <line x1="14" y1="11" x2="14" y2="17"></line>
+                                        </svg>
                                       </button>
                                     )}
                                   </div>

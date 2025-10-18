@@ -3,6 +3,7 @@ import { useAuth } from "../hooks/useAuth";
 import { useEffect, useState } from "react";
 import API from "../api/axiosClient";
 import { getUserPosts, updatePost, deletePost } from "../api/post";
+import { getCommentsByPost, createComment, deleteComment } from "../api/comment";
 import "../styles/profile.css";
 import {
   FiEdit2,
@@ -33,6 +34,12 @@ export default function ProfilePage() {
 
   // 🔹 État pour la notification de succès
   const [showSuccessToast, setShowSuccessToast] = useState(false);
+
+  // 🔹 États pour les commentaires
+  const [commentsVisible, setCommentsVisible] = useState({});
+  const [comments, setComments] = useState({});
+  const [newComment, setNewComment] = useState({});
+  const [loadingComments, setLoadingComments] = useState({});
 
   // 🔹 Vérifie si on est sur notre propre profil
   const isOwnProfile =
@@ -158,6 +165,100 @@ export default function ProfilePage() {
     } finally {
       setDeleteLoading(false);
     }
+  };
+
+  // 🔹 Toggle comments visibility and load comments
+  const toggleComments = async (postId) => {
+    const isVisible = commentsVisible[postId];
+    
+    if (!isVisible) {
+      // Load comments if not already loaded
+      if (!comments[postId]) {
+        setLoadingComments({ ...loadingComments, [postId]: true });
+        try {
+          const postComments = await getCommentsByPost(postId);
+          setComments({ ...comments, [postId]: postComments });
+        } catch (err) {
+          console.error("Error loading comments:", err);
+        } finally {
+          setLoadingComments({ ...loadingComments, [postId]: false });
+        }
+      }
+    }
+    
+    setCommentsVisible({ ...commentsVisible, [postId]: !isVisible });
+  };
+
+  // 🔹 Add a comment
+  const handleAddComment = async (postId) => {
+    const content = newComment[postId]?.trim();
+    if (!content) return;
+
+    try {
+      const comment = await createComment(postId, content);
+      
+      // Update comments list
+      setComments({
+        ...comments,
+        [postId]: [...(comments[postId] || []), comment]
+      });
+      
+      // Clear input
+      setNewComment({ ...newComment, [postId]: "" });
+      
+      // Update post comments count
+      setPosts(posts.map((p) => {
+        if (p._id === postId) {
+          return { ...p, comments: [...(p.comments || []), comment._id] };
+        }
+        return p;
+      }));
+    } catch (err) {
+      console.error("Error adding comment:", err);
+    }
+  };
+
+  // 🔹 Delete a comment
+  const handleDeleteComment = async (postId, commentId) => {
+    try {
+      await deleteComment(commentId);
+      
+      // Update comments list
+      setComments({
+        ...comments,
+        [postId]: comments[postId].filter((c) => c._id !== commentId)
+      });
+      
+      // Update post comments count
+      setPosts(posts.map((p) => {
+        if (p._id === postId) {
+          return { ...p, comments: (p.comments || []).filter((id) => id !== commentId) };
+        }
+        return p;
+      }));
+    } catch (err) {
+      console.error("Error deleting comment:", err);
+    }
+  };
+
+  // 🔹 Handle user click
+  const handleUserClick = (userId) => {
+    if (!userId) return;
+    if (currentUser && (currentUser._id === userId || currentUser.id === userId)) {
+      navigate("/profile");
+    } else {
+      navigate(`/profile/${userId}`);
+    }
+  };
+
+  // 🔹 Check if user owns the comment
+  const isCommentOwner = (comment) => {
+    if (!currentUser || !comment || !comment.author) return false;
+    
+    const userId = currentUser._id || currentUser.id;
+    const authorId = comment.author._id || comment.author.id;
+    
+    return userId && authorId && userId.toString() === authorId.toString();
   };
 
   if (loading || !user) {
@@ -315,14 +416,135 @@ export default function ProfilePage() {
                         })}
                       </div>
                       
-                      {isOwnProfile && (
-                        <div className="profile-post-actions">
+                      <div className="profile-post-actions">
+                        {isOwnProfile && (
                           <button
                             className="profile-post-edit-btn"
                             onClick={() => handleStartEdit(post)}
                           >
                             Modifier
                           </button>
+                        )}
+                        <button
+                          className="profile-post-comments-btn"
+                          onClick={() => toggleComments(post._id)}
+                        >
+                          💬 Commentaires ({comments[post._id]?.length || post.comments?.length || 0})
+                        </button>
+                      </div>
+
+                      {/* Section des commentaires */}
+                      {commentsVisible[post._id] && (
+                        <div className="profile-comments-section">
+                          {loadingComments[post._id] ? (
+                            <div className="profile-comments-loading">Chargement des commentaires...</div>
+                          ) : (
+                            <>
+                              {/* Liste des commentaires */}
+                              <div className="profile-comments-list">
+                                {comments[post._id] && comments[post._id].length > 0 ? (
+                                  comments[post._id].map((comment) => (
+                                    <div key={comment._id} className="profile-comment">
+                                      <div className="profile-comment-header">
+                                        <div
+                                          className="profile-comment-avatar"
+                                          onClick={() => handleUserClick(comment.author._id)}
+                                        >
+                                          {comment.author?.icon ? (
+                                            <img
+                                              src={comment.author.icon}
+                                              alt={comment.author.name}
+                                              className="profile-comment-avatar-img"
+                                            />
+                                          ) : (
+                                            comment.author?.name?.charAt(0).toUpperCase() || "U"
+                                          )}
+                                        </div>
+                                        <div className="profile-comment-info">
+                                          <div
+                                            className="profile-comment-username"
+                                            onClick={() => handleUserClick(comment.author._id)}
+                                          >
+                                            {comment.author?.name}
+                                          </div>
+                                          <div className="profile-comment-date">
+                                            {new Date(comment.date_created).toLocaleDateString("fr-FR", {
+                                              year: "numeric",
+                                              month: "short",
+                                              day: "numeric",
+                                              hour: "2-digit",
+                                              minute: "2-digit",
+                                            })}
+                                          </div>
+                                        </div>
+                                        {isCommentOwner(comment) && (
+                                          <button
+                                            className="profile-comment-delete"
+                                            onClick={() => handleDeleteComment(post._id, comment._id)}
+                                            title="Supprimer le commentaire"
+                                          >
+                                            <svg
+                                              xmlns="http://www.w3.org/2000/svg"
+                                              width="16"
+                                              height="16"
+                                              viewBox="0 0 24 24"
+                                              fill="none"
+                                              stroke="currentColor"
+                                              strokeWidth="2"
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                            >
+                                              <polyline points="3 6 5 6 21 6"></polyline>
+                                              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                              <line x1="10" y1="11" x2="10" y2="17"></line>
+                                              <line x1="14" y1="11" x2="14" y2="17"></line>
+                                            </svg>
+                                          </button>
+                                        )}
+                                      </div>
+                                      <div className="profile-comment-content">
+                                        {comment.content}
+                                      </div>
+                                    </div>
+                                  ))
+                                ) : (
+                                  <div className="profile-comments-empty">
+                                    Aucun commentaire pour le moment
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Formulaire d'ajout de commentaire */}
+                              {currentUser && (
+                                <div className="profile-comment-form">
+                                  <input
+                                    type="text"
+                                    placeholder="Ajouter un commentaire..."
+                                    value={newComment[post._id] || ""}
+                                    onChange={(e) =>
+                                      setNewComment({
+                                        ...newComment,
+                                        [post._id]: e.target.value,
+                                      })
+                                    }
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter") {
+                                        handleAddComment(post._id);
+                                      }
+                                    }}
+                                    className="profile-comment-input"
+                                  />
+                                  <button
+                                    onClick={() => handleAddComment(post._id)}
+                                    className="profile-comment-submit"
+                                    disabled={!newComment[post._id]?.trim()}
+                                  >
+                                    Envoyer
+                                  </button>
+                                </div>
+                              )}
+                            </>
+                          )}
                         </div>
                       )}
                     </div>

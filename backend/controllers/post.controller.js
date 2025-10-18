@@ -6,7 +6,6 @@ class PostController {
   async getAllPosts(req, res) {
     try {
       const posts = await Post.find()
-        .populate('comments')
         .populate({ path: 'author', select: '-password -__v' })
         .populate({ path: 'likes', select: 'username email' });
       res.json(posts);
@@ -21,7 +20,10 @@ class PostController {
     try {
       const user = await User.findById(userId).populate({
         path: 'posts',
-        populate: { path: 'comments' }
+        populate: [
+          { path: 'author', select: '-password -__v' },
+          { path: 'likes', select: 'username email' }
+        ]
       });
       if (!user) {
         return res.status(404).json({ error: 'Utilisateur non trouvé' });
@@ -118,8 +120,7 @@ class PostController {
       
       const updatedPost = await Post.findById(postId)
         .populate({ path: 'likes', select: 'username email' })
-        .populate({ path: 'author', select: '-password -__v' })
-        .populate('comments');
+        .populate({ path: 'author', select: '-password -__v' });
 
       res.json({
         message: likeIndex > -1 ? 'Like retiré' : 'Like ajouté',
