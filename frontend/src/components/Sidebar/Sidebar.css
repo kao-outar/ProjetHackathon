@@ -136,8 +136,9 @@
     left: 0;
   }
 
-  /* Bouton hamburger */
+  /* Bouton hamburger : visible SEULEMENT sur mobile */
   .sidebar-toggle {
+    display: flex;
     position: fixed;
     top: 15px;
     left: 15px;
@@ -156,7 +157,7 @@
     background-color: #2a5298;
   }
 
-  /* Overlay sombre derrière la sidebar */
+  /* Overlay derrière la sidebar */
   .sidebar-overlay {
     display: none;
     position: fixed;
@@ -206,5 +207,26 @@
   .sidebar-toggle {
     font-size: 1.5rem;
     padding: 6px 10px;
+  }
+}
+
+/* --- Desktop (≥769px) --- */
+@media (min-width: 769px) {
+  /* Cache complètement le bouton hamburger sur grand écran */
+  .sidebar-toggle {
+    display: none;
+  }
+
+  /* Cache aussi l'overlay, inutile sur desktop */
+  .sidebar-overlay {
+    display: none !important;
+  }
+
+  /* Sidebar toujours visible sur desktop */
+  .sidebar {
+    position: sticky;
+    left: 0;
+    width: 280px;
+    transition: none;
   }
 }
