@@ -8,6 +8,7 @@ import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import PublicRoute from "./components/Auth/PublicRoute";
 import FeedPage from "./pages/FeedPage";
 import ProfileEditPage from "./pages/ProfilEditPage";
+import DashboardPage from "./pages/DashboardPage";
 
 function App() {
   return (
@@ -65,6 +66,14 @@ function App() {
           <Route
             path="/feed"
             element={<ProtectedRoute><FeedPage /></ProtectedRoute>}
+          />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
           />
           <Route
             path="/"
