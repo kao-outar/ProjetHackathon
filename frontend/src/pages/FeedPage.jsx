@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { getAllPosts, toggleLikePost } from "../api/post"; // 🔹 ajouter toggleLikePost
+import { getAllPosts, toggleLikePost } from "../api/post";
 import CreatePostModal from "../components/post/CreatePostModal";
 import "../styles/feed.css";
 
@@ -17,9 +17,9 @@ export default function FeedPage() {
     async function fetchPosts() {
       try {
         const data = await getAllPosts();
-        setPosts(data);
+        setPosts(data.sort((a, b) => new Date(b.date_created) - new Date(a.date_created)));
       } catch (err) {
-        console.error("Erreur lors du chargement des posts :", err);
+        console.error("❌ Error while loading posts:", err);
       } finally {
         setLoading(false);
       }
@@ -40,33 +40,33 @@ export default function FeedPage() {
     setPosts([newPost, ...posts]);
   };
 
-  // 🔹 Fonction pour liker un post
+  // 🔹 Handle post like
   const handleLike = async (postId) => {
     try {
       const response = await toggleLikePost(postId);
       const updatedPost = response.post;
 
-      // Mettre à jour localement la liste des posts
-      setPosts(posts.map(p => (p._id === postId ? updatedPost : p)));
+      // Update post list locally
+      setPosts(posts.map((p) => (p._id === postId ? updatedPost : p)));
     } catch (err) {
-      console.error("Erreur lors du like :", err);
+      console.error("Error while liking post:", err);
     }
   };
 
   if (authLoading || loading) {
-    return <div className="feed-loading">Chargement...</div>;
+    return <div className="feed-loading">Loading...</div>;
   }
 
   return (
     <div className="feed-container">
       <div className="feed-header">
-        <h1>Fil d'actualité</h1>
+        <h1>News Feed</h1>
         {user && (
           <button
             className="feed-profile-btn"
             onClick={() => navigate("/profile")}
           >
-            Mon profil
+            My Profile
           </button>
         )}
       </div>
@@ -77,7 +77,7 @@ export default function FeedPage() {
             className="feed-create-post-btn"
             onClick={() => setIsModalOpen(true)}
           >
-            + Créer un post
+            + Create a Post
           </button>
         )}
 
@@ -113,7 +113,7 @@ export default function FeedPage() {
                         {post.author?.name}
                       </div>
                       <div className="feed-post-date">
-                        {new Date(post.date_created).toLocaleDateString("fr-FR", {
+                        {new Date(post.date_created).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "short",
                           day: "numeric",
@@ -133,9 +133,9 @@ export default function FeedPage() {
                       onClick={() => handleLike(post._id)}
                       style={{ color: likedByUser ? "#2a5298" : "#555" }}
                     >
-                      👍 J'aime ({post.likes.length})
+                      👍 Like ({post.likes.length})
                     </button>
-                    <button className="feed-action-btn">💬 Commenter</button>
+                    <button className="feed-action-btn">💬 Comment</button>
                   </div>
                 </div>
               );
@@ -143,7 +143,7 @@ export default function FeedPage() {
           </div>
         ) : (
           <div className="feed-empty">
-            Aucun post pour le moment. Soyez le premier à en créer un !
+            No posts yet. Be the first to create one!
           </div>
         )}
       </div>

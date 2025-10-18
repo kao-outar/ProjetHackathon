@@ -4,9 +4,15 @@ import { useEffect, useState } from "react";
 import API from "../api/axiosClient";
 import { getUserPosts, updatePost, deletePost } from "../api/post";
 import "../styles/profile.css";
+import {
+  FiEdit2,
+  FiTrash2,
+  FiSave,
+  FiX,
+} from "react-icons/fi";
 
 export default function ProfilePage() {
-  const { userId } = useParams(); // optionnel : si pas présent => profil perso
+  const { userId } = useParams();
   const { user: currentUser, loading, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -32,38 +38,35 @@ export default function ProfilePage() {
   const isOwnProfile =
     !userId || userId === currentUser?._id || userId === currentUser?.uuid;
 
-  // 🔹 Récupère les infos utilisateur
   useEffect(() => {
     const fetchUser = async () => {
       try {
         if (isOwnProfile) {
-          // Si c’est nous, on prend les données du contexte
           setUser(currentUser);
         } else {
-          // Sinon, on va chercher l’autre utilisateur
           const res = await API.get(`/users/${userId}`);
           setUser(res.data.user);
         }
       } catch (err) {
-        console.error("Erreur de récupération utilisateur :", err);
-        setError("Impossible de charger le profil");
+        console.error("User fetch error:", err);
+        setError("Failed to load profile.");
       }
     };
 
     if (!loading) fetchUser();
   }, [userId, currentUser, isOwnProfile, loading]);
 
-  // 🔹 Récupère les posts de l’utilisateur
   useEffect(() => {
     const fetchPosts = async () => {
       if (!user) return;
       try {
         setPostsLoading(true);
         const userPosts = await getUserPosts(user._id || user.id);
-        setPosts(userPosts);
+        setPosts(userPosts.sort((a, b) => new Date(b.date_created) - new Date(a.date_created)));
+
       } catch (err) {
-        console.error("Erreur lors du chargement des posts :", err);
-        setError("Impossible de charger les posts");
+        console.error("Post fetch error:", err);
+        setError("Failed to load posts.");
       } finally {
         setPostsLoading(false);
       }
@@ -160,7 +163,7 @@ export default function ProfilePage() {
   if (loading || !user) {
     return (
       <div className="profile-container">
-        <p className="profile-loading">Chargement du profil...</p>
+        <p className="profile-loading">Loading profile...</p>
       </div>
     );
   }
@@ -168,16 +171,16 @@ export default function ProfilePage() {
   return (
     <div className="profile-container">
       <div className="profile-header">
-        <h1>Profil</h1>
+        <h1>Profile</h1>
         {isOwnProfile && (
           <button className="profile-logout-btn" onClick={handleLogout}>
-            Déconnexion
+            Logout
           </button>
         )}
       </div>
 
       <div className="profile-content">
-        {/* 🔸 Bloc Utilisateur */}
+        {/* === USER INFO === */}
         <div className="profile-user-block">
           <div className="profile-avatar-container">
             <div className="profile-avatar">
@@ -199,15 +202,15 @@ export default function ProfilePage() {
 
             <div className="profile-user-meta">
               <div className="profile-user-meta-item">
-                <div className="profile-user-meta-label">Âge</div>
+                <div className="profile-user-meta-label">Age</div>
                 <div className="profile-user-meta-value">
-                  {user.age ? `${user.age} ans` : "Non renseigné"}
+                  {user.age ? `${user.age} years` : "Not specified"}
                 </div>
               </div>
               <div className="profile-user-meta-item">
-                <div className="profile-user-meta-label">Genre</div>
+                <div className="profile-user-meta-label">Gender</div>
                 <div className="profile-user-meta-value">
-                  {user.gender || "Non renseigné"}
+                  {user.gender || "Not specified"}
                 </div>
               </div>
             </div>
@@ -220,16 +223,16 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* 🔸 Bloc Posts */}
+        {/* === USER POSTS === */}
         <div className="profile-posts-block">
           <h2>
             {isOwnProfile
-              ? `Mes Posts (${posts.length})`
-              : `Posts de ${user.name} (${posts.length})`}
+              ? `My Posts (${posts.length})`
+              : `${user.name}'s Posts (${posts.length})`}
           </h2>
 
           {postsLoading ? (
-            <div className="profile-posts-loading">Chargement des posts...</div>
+            <div className="profile-posts-loading">Loading posts...</div>
           ) : error ? (
             <div className="profile-posts-error">{error}</div>
           ) : posts.length > 0 ? (
@@ -330,8 +333,8 @@ export default function ProfilePage() {
           ) : (
             <div className="profile-posts-empty">
               {isOwnProfile
-                ? "Vous n'avez pas encore publié de posts."
-                : `${user.name} n'a pas encore publié de posts.`}
+                ? "You haven’t published any posts yet."
+                : `${user.name} hasn’t published any posts yet.`}
             </div>
           )}
         </div>

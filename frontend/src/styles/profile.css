@@ -9,18 +9,18 @@
 html, body, #root {
   height: 100%;
   width: 100%;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* === Conteneur principal === */
+/* === MAIN CONTAINER === */
 .profile-container {
   width: 100%;
   min-height: 100vh;
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e57c2 100%);
   padding: 2rem 1rem;
-  font-family: 'Poppins', sans-serif;
 }
 
-/* === Header === */
+/* === HEADER === */
 .profile-header {
   width: 100%;
   max-width: 800px;
@@ -45,7 +45,6 @@ html, body, #root {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: 'Poppins', sans-serif;
   text-transform: uppercase;
   font-size: 0.85rem;
 }
@@ -56,7 +55,7 @@ html, body, #root {
   transform: translateY(-2px);
 }
 
-/* === Wrapper du contenu === */
+/* === CONTENT WRAPPER === */
 .profile-content {
   width: 100%;
   max-width: 800px;
@@ -66,16 +65,16 @@ html, body, #root {
   gap: 2rem;
 }
 
-/* === Bloc Utilisateur === */
+/* === USER BLOCK === */
 .profile-user-block {
   background: white;
   border-radius: 16px;
   padding: 2.5rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-  animation: slideIn 0.5s ease-out;
   display: flex;
   align-items: center;
   gap: 2rem;
+  animation: slideIn 0.5s ease-out;
 }
 
 @keyframes slideIn {
@@ -87,19 +86,6 @@ html, body, #root {
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-.profile-avatar-container {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  overflow: hidden;
-  background-color: #ddd;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2rem;
-  color: #555;
 }
 
 .profile-avatar {
@@ -119,11 +105,7 @@ html, body, #root {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
 }
-
-
-
 
 .profile-user-info {
   flex: 1;
@@ -149,12 +131,6 @@ html, body, #root {
   font-size: 0.9rem;
 }
 
-.profile-user-meta-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
 .profile-user-meta-label {
   color: #999;
   font-weight: 500;
@@ -176,13 +152,11 @@ html, body, #root {
   color: white;
   border: none;
   border-radius: 8px;
-  font-family: 'Poppins', sans-serif;
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
 }
 
 .profile-edit-btn:hover {
@@ -190,13 +164,12 @@ html, body, #root {
   box-shadow: 0 10px 25px rgba(42, 82, 152, 0.3);
 }
 
-/* === Bloc Posts === */
+/* === POSTS BLOCK === */
 .profile-posts-block {
   background: white;
   border-radius: 16px;
   padding: 2.5rem;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-  animation: slideIn 0.5s ease-out 0.1s both;
 }
 
 .profile-posts-block h2 {
@@ -220,18 +193,14 @@ html, body, #root {
 .profile-posts-list::-webkit-scrollbar {
   width: 8px;
 }
-
-.profile-posts-list::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
 .profile-posts-list::-webkit-scrollbar-thumb {
   background: #2a5298;
   border-radius: 10px;
 }
 
+/* === POST CARD === */
 .profile-post-card {
+  background: #f9f9f9;
   padding: 1.5rem;
   border: 2px solid #e8e8e8;
   border-radius: 10px;
@@ -242,10 +211,6 @@ html, body, #root {
 .profile-post-card:hover {
   border-color: #2a5298;
   box-shadow: 0 8px 20px rgba(42, 82, 152, 0.1);
-}
-
-.profile-post-display {
-  position: relative;
 }
 
 .profile-post-title {
@@ -266,93 +231,10 @@ html, body, #root {
   font-size: 0.8rem;
   color: #999;
   font-weight: 500;
+  text-align: right;
 }
 
-.profile-posts-empty {
-  text-align: center;
-  padding: 2rem;
-  color: #999;
-  font-style: italic;
-}
-
-/* === État de chargement === */
-.profile-loading {
-  color: white;
-  font-size: 1.2rem;
-  text-align: center;
-  animation: pulse 1.5s infinite;
-  margin-top: 3rem;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-/* === Message d'erreur === */
-.profile-error {
-  background: #ffebee;
-  color: #c62828;
-  padding: 1.5rem;
-  border-radius: 8px;
-  border-left: 5px solid #c62828;
-  font-weight: 500;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-/* === Responsive === */
-@media (max-width: 768px) {
-  .profile-user-block {
-    flex-direction: column;
-    text-align: center;
-    gap: 1.5rem;
-  }
-
-  .profile-user-meta {
-    justify-content: center;
-  }
-
-  .profile-header {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .profile-header h1 {
-    font-size: 1.6rem;
-  }
-}
-
-@media (max-width: 600px) {
-  .profile-container {
-    padding: 1rem;
-  }
-
-  .profile-user-block,
-  .profile-posts-block {
-    padding: 1.5rem;
-  }
-
-  .profile-avatar {
-    width: 100px;
-    height: 100px;
-    font-size: 2.5rem;
-  }
-
-  .profile-user-name {
-    font-size: 1.3rem;
-  }
-
-  .profile-logout-btn {
-    width: 100%;
-  }
-
-  .profile-posts-list {
-    max-height: 400px;
-  }
-}
-
-/* Bouton de suppression avec icône */
+/* === DELETE BUTTON === */
 .profile-post-delete-btn {
   position: absolute;
   top: 10px;
@@ -367,7 +249,6 @@ html, body, #root {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10;
 }
 
 .profile-post-delete-btn:hover {
@@ -375,54 +256,24 @@ html, body, #root {
   color: white;
 }
 
-.profile-post-delete-btn svg {
-  display: block;
-}
-
-/* Actions en bas (seulement le bouton Modifier maintenant) */
-.profile-post-actions {
-  margin-top: 15px;
-  display: flex;
-  gap: 10px;
-}
-
-.profile-post-edit-btn {
-  padding: 6px 16px;
-  background-color: #4a90e2;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.profile-post-edit-btn:hover {
-  background-color: #357abd;
-}
-
-/* Formulaire d'édition */
+/* === EDIT MODE === */
 .profile-post-edit-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.profile-post-edit-title {
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  font-family: inherit;
-}
-
+.profile-post-edit-title,
 .profile-post-edit-content {
+  width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 14px;
   font-family: inherit;
+}
+
+.profile-post-edit-content {
   resize: vertical;
   min-height: 80px;
 }
@@ -454,7 +305,6 @@ html, body, #root {
   background-color: #4caf50;
   color: white;
 }
-
 .profile-post-save-btn:hover:not(:disabled) {
   background-color: #45a049;
 }
@@ -463,24 +313,14 @@ html, body, #root {
   background-color: #f5f5f5;
   color: #333;
 }
-
 .profile-post-cancel-btn:hover:not(:disabled) {
   background-color: #e0e0e0;
 }
 
-.profile-post-save-btn:disabled,
-.profile-post-cancel-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Modal de suppression */
+/* === MODAL DELETE === */
 .delete-modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
@@ -490,12 +330,8 @@ html, body, #root {
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .delete-modal {
@@ -509,28 +345,21 @@ html, body, #root {
 }
 
 @keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .delete-modal-title {
-  margin: 0 0 15px 0;
   font-size: 20px;
   font-weight: 600;
   color: #333;
+  margin-bottom: 15px;
 }
 
 .delete-modal-text {
-  margin: 0 0 25px 0;
   font-size: 16px;
   color: #666;
-  line-height: 1.5;
+  margin-bottom: 25px;
 }
 
 .delete-modal-actions {
@@ -554,8 +383,7 @@ html, body, #root {
   background-color: #f5f5f5;
   color: #333;
 }
-
-.delete-modal-cancel-btn:hover:not(:disabled) {
+.delete-modal-cancel-btn:hover {
   background-color: #e0e0e0;
 }
 
@@ -563,18 +391,11 @@ html, body, #root {
   background-color: #dc3545;
   color: white;
 }
-
-.delete-modal-confirm-btn:hover:not(:disabled) {
+.delete-modal-confirm-btn:hover {
   background-color: #c82333;
 }
 
-.delete-modal-cancel-btn:disabled,
-.delete-modal-confirm-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Toast de succès */
+/* === TOAST SUCCESS === */
 .success-toast {
   position: fixed;
   bottom: 30px;
@@ -589,30 +410,31 @@ html, body, #root {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1001;
   animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-in 2.7s;
-  font-size: 15px;
-  font-weight: 500;
-}
-
-.success-toast svg {
-  flex-shrink: 0;
 }
 
 @keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
 
 @keyframes fadeOut {
-  from {
-    opacity: 1;
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .profile-user-block {
+    flex-direction: column;
+    text-align: center;
   }
-  to {
-    opacity: 0;
+
+  .profile-header {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .profile-logout-btn {
+    width: 100%;
   }
 }

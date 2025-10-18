@@ -9,35 +9,34 @@ export default function CreatePostModal({ isOpen, onClose, onPostCreated }) {
   const [error, setError] = useState("");
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError("");
-  setLoading(true);
+    e.preventDefault();
+    setError("");
+    setLoading(true);
 
-  if (!title.trim() || !content.trim()) {
-    setError("Le titre et le contenu sont obligatoires");
-    setLoading(false);
-    return;
-  }
+    if (!title.trim() || !content.trim()) {
+      setError("Title and content are required.");
+      setLoading(false);
+      return;
+    }
 
-  try {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const authorId = user?._id || user?.id;
-    if (!authorId) throw new Error("User non trouvé ou mal formaté");
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const authorId = user?._id || user?.id;
+      if (!authorId) throw new Error("User not found or invalid format.");
 
-    const post = await createPost(title, content); // plus besoin de passer authorId
+      const post = await createPost(title, content); // no need to pass authorId anymore
 
-
-    onPostCreated(post);
-    setTitle("");
-    setContent("");
-    onClose();
-  } catch (err) {
-    console.error("Erreur lors de la création du post:", err.response?.data || err);
-    setError(err.response?.data?.error || "Erreur lors de la création du post");
-  } finally {
-    setLoading(false);
-  }
-};
+      onPostCreated(post);
+      setTitle("");
+      setContent("");
+      onClose();
+    } catch (err) {
+      console.error("Error while creating post:", err.response?.data || err);
+      setError(err.response?.data?.error || "Failed to create post.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -45,17 +44,17 @@ export default function CreatePostModal({ isOpen, onClose, onPostCreated }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Créer un post</h2>
+          <h2>Create a Post</h2>
           <button className="modal-close-btn" onClick={onClose}>✕</button>
         </div>
 
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group">
-            <label htmlFor="title">Titre</label>
+            <label htmlFor="title">Title</label>
             <input
               type="text"
               id="title"
-              placeholder="Le titre de votre post"
+              placeholder="Enter your post title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               disabled={loading}
@@ -64,10 +63,10 @@ export default function CreatePostModal({ isOpen, onClose, onPostCreated }) {
           </div>
 
           <div className="form-group">
-            <label htmlFor="content">Contenu</label>
+            <label htmlFor="content">Content</label>
             <textarea
               id="content"
-              placeholder="Écrivez votre post ici..."
+              placeholder="Write your post here..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
               disabled={loading}
@@ -85,14 +84,14 @@ export default function CreatePostModal({ isOpen, onClose, onPostCreated }) {
               onClick={onClose}
               disabled={loading}
             >
-              Annuler
+              Cancel
             </button>
             <button
               type="submit"
               className="modal-btn modal-btn-submit"
               disabled={loading}
             >
-              {loading ? "Publication..." : "Publier"}
+              {loading ? "Publishing..." : "Publish"}
             </button>
           </div>
         </form>
