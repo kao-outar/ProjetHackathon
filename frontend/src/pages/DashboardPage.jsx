@@ -64,11 +64,11 @@ export default function DashboardPage() {
   ];
 
   // Données pour averages
-  const averagesData = [
+ /* const averagesData = [
     { name: 'Avg Age', value: Math.round(kpis.users.averageAge) },
     { name: 'Posts/User', value: Math.round(kpis.posts.averagePerUser * 10) / 10 },
     { name: 'Comments/Post', value: Math.round(kpis.comments.averagePerPost * 10) / 10 }
-  ];
+  ];*/
 
   const COLORS = ['#4A90E2', '#50C878', '#FFB347'];
 
