@@ -173,22 +173,21 @@ export default function ProfilePage() {
   const toggleComments = async (postId) => {
     const isVisible = commentsVisible[postId];
     
-    if (!isVisible) {
-      // Load comments if not already loaded
-      if (!comments[postId]) {
-        setLoadingComments({ ...loadingComments, [postId]: true });
-        try {
-          const postComments = await getCommentsByPost(postId);
-          setComments({ ...comments, [postId]: postComments });
-        } catch (err) {
-          console.error("Error loading comments:", err);
-        } finally {
-          setLoadingComments({ ...loadingComments, [postId]: false });
-        }
+    // Toggle visibility immediately
+    setCommentsVisible(prev => ({ ...prev, [postId]: !isVisible }));
+    
+    // Load comments only if opening and not already loaded
+    if (!isVisible && !comments[postId]) {
+      setLoadingComments(prev => ({ ...prev, [postId]: true }));
+      try {
+        const postComments = await getCommentsByPost(postId);
+        setComments(prev => ({ ...prev, [postId]: postComments }));
+      } catch (err) {
+        console.error("Error loading comments:", err);
+      } finally {
+        setLoadingComments(prev => ({ ...prev, [postId]: false }));
       }
     }
-    
-    setCommentsVisible({ ...commentsVisible, [postId]: !isVisible });
   };
 
   // 🔹 Add a comment
@@ -196,20 +195,20 @@ export default function ProfilePage() {
     const content = newComment[postId]?.trim();
     if (!content) return;
 
+    // Clear input immediately for better UX
+    setNewComment(prev => ({ ...prev, [postId]: "" }));
+
     try {
       const comment = await createComment(postId, content);
       
       // Update comments list
-      setComments({
-        ...comments,
-        [postId]: [...(comments[postId] || []), comment]
-      });
-      
-      // Clear input
-      setNewComment({ ...newComment, [postId]: "" });
+      setComments(prev => ({
+        ...prev,
+        [postId]: [...(prev[postId] || []), comment]
+      }));
       
       // Update post comments count
-      setPosts(posts.map((p) => {
+      setPosts(prev => prev.map((p) => {
         if (p._id === postId) {
           return { ...p, comments: [...(p.comments || []), comment._id] };
         }
@@ -217,29 +216,40 @@ export default function ProfilePage() {
       }));
     } catch (err) {
       console.error("Error adding comment:", err);
+      // Restore input on error
+      setNewComment(prev => ({ ...prev, [postId]: content }));
     }
   };
 
-  // 🔹 Delete a comment
+  // 🔹 Delete a comment with optimistic update
   const handleDeleteComment = async (postId, commentId) => {
+    // Optimistic update - remove immediately
+    const oldComments = comments[postId];
+    
+    setComments(prev => ({
+      ...prev,
+      [postId]: prev[postId].filter((c) => c._id !== commentId)
+    }));
+    
+    setPosts(prev => prev.map((p) => {
+      if (p._id === postId) {
+        return { ...p, comments: (p.comments || []).filter((id) => id !== commentId) };
+      }
+      return p;
+    }));
+
     try {
       await deleteComment(commentId);
-      
-      // Update comments list
-      setComments({
-        ...comments,
-        [postId]: comments[postId].filter((c) => c._id !== commentId)
-      });
-      
-      // Update post comments count
-      setPosts(posts.map((p) => {
+    } catch (err) {
+      console.error("Error deleting comment:", err);
+      // Revert on error
+      setComments(prev => ({ ...prev, [postId]: oldComments }));
+      setPosts(prev => prev.map((p) => {
         if (p._id === postId) {
-          return { ...p, comments: (p.comments || []).filter((id) => id !== commentId) };
+          return { ...p, comments: [...(p.comments || []), commentId] };
         }
         return p;
       }));
-    } catch (err) {
-      console.error("Error deleting comment:", err);
     }
   };
 
@@ -275,27 +285,45 @@ export default function ProfilePage() {
     setEditCommentContent("");
   };
 
-  // 🔹 Save edited comment
+  // 🔹 Save edited comment with optimistic update
   const handleSaveEditComment = async (postId, commentId) => {
     const content = editCommentContent.trim();
     if (!content) return;
 
+    // Save old content for revert
+    const oldComment = comments[postId].find(c => c._id === commentId);
+    
+    // Optimistic update
+    setComments(prev => ({
+      ...prev,
+      [postId]: prev[postId].map((c) => 
+        c._id === commentId ? { ...c, content, date_updated: new Date() } : c
+      )
+    }));
+    
+    // Reset editing state immediately
+    setEditingCommentId(null);
+    setEditCommentContent("");
+
     try {
       const updatedComment = await updateComment(commentId, content);
       
-      // Update comments list
-      setComments({
-        ...comments,
-        [postId]: comments[postId].map((c) => 
+      // Update with real data from server
+      setComments(prev => ({
+        ...prev,
+        [postId]: prev[postId].map((c) => 
           c._id === commentId ? updatedComment : c
         )
-      });
-      
-      // Reset editing state
-      setEditingCommentId(null);
-      setEditCommentContent("");
+      }));
     } catch (err) {
       console.error("Error updating comment:", err);
+      // Revert on error
+      setComments(prev => ({
+        ...prev,
+        [postId]: prev[postId].map((c) => 
+          c._id === commentId ? oldComment : c
+        )
+      }));
     }
   };
 
