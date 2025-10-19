@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { signin } from "../api/auth";
 import "../styles/auth.css"; 
-import { FiEye, FiEyeOff } from 'react-icons/fi';
+import { FiEye, FiEyeOff, FiMail, FiLock } from "react-icons/fi";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,12 +11,13 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuth(); // Utiliser login et isAuthenticated
 
-  // 🔒 Redirection automatique si déjà connecté
+  const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
+
+  // 🔒 Redirige si déjà connecté
   useEffect(() => {
-    if (isAuthenticated) navigate("/feed"); // Utiliser isAuthenticated
+    if (isAuthenticated) navigate("/feed");
   }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e) => {
@@ -24,32 +25,36 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
+    // ✅ Validation locale
     if (!email.includes("@")) {
-      setError("Invalid email");
+      setError("Please enter a valid email address.");
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError("Password is too short");
+      setError("Password must be at least 6 characters long.");
       setLoading(false);
       return;
     }
 
     try {
       const data = await signin(email, password);
-      console.log("✅ Réponse du backend :", data);
-      login(data); // Utiliser la fonction login du contexte
+      console.log("✅ Backend response:", data);
+      login(data); // Stocke user + token dans le contexte
       navigate("/feed");
     } catch (err) {
-        console.log("Erreur API:", err.response?.data); // 👈 utile pour déboguer
-        setError(err.response?.data?.error || "Erreur de connexion");
+      console.error("❌ Login error:", err.response?.data);
+      const backendError = err.response?.data?.error;
+      if (backendError === "invalid_credentials") {
+        setError("Invalid email or password.");
+      } else {
+        setError("Login failed. Please try again later.");
+      }
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-  }
-
-  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  };
 
   return (
     <div className="auth-container">
@@ -58,30 +63,33 @@ export default function LoginPage() {
         <p className="subtitle">Access your account</p>
 
         <div className="form-group">
-          <label htmlFor="email">Email</label>
+          <FiMail className="input-icon" />
           <input
             type="email"
             id="email"
-            placeholder="your@email.com"
+            placeholder="Your email"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             required
             disabled={loading}
           />
         </div>
 
         <div className="form-group password-group">
-          <label htmlFor="password">Password</label>
+          <FiLock className="input-icon" />
           <input
-            type={showPassword ? 'text' : 'password'}
+            type={showPassword ? "text" : "password"}
             id="password"
-            placeholder="••••••••"
+            placeholder="Your password"
             value={password}
-            onChange={e => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             required
             disabled={loading}
           />
-          <span onClick={togglePasswordVisibility} className="password-toggle-icon">
+          <span
+            onClick={() => setShowPassword(!showPassword)}
+            className="password-toggle-icon"
+          >
             {showPassword ? <FiEyeOff /> : <FiEye />}
           </span>
         </div>
@@ -93,7 +101,7 @@ export default function LoginPage() {
         </button>
 
         <p className="auth-link">
-          Don't have an account yet? <a href="/signup">Sign up</a>
+          Don’t have an account yet? <Link to="/signup">Sign up</Link>
         </p>
       </form>
     </div>
