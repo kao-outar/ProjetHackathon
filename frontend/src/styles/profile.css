@@ -625,6 +625,7 @@ html, body, #root {
   outline: none;
   border-color: #2a5298;
   box-shadow: 0 0 0 3px rgba(42, 82, 152, 0.1);
+  color: #333;
 }
 
 .profile-comment-submit {
