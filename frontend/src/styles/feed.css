@@ -384,7 +384,6 @@
   font-size: 0.9rem;
   transition: all 0.3s ease;
   background: white;
-  color: #000;
 }
 
 .feed-comment-input:focus {

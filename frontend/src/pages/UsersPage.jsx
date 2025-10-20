@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; 
 import API from "../api/axiosClient";
 import "../styles/users-page.css";
-import { useAuth } from "../hooks/useAuth";
 
 export default function UsersPage() {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-
-  const navigate = useNavigate(); 
-  const { user } = useAuth(); 
 
   useEffect(() => {
     async function fetchUsers() {
@@ -39,16 +34,6 @@ export default function UsersPage() {
     );
   });
 
-  
-  const handleUserClick = (userId) => {
-    if (!userId) return;
-    if (user && (user._id === userId || user.id === userId)) {
-      navigate("/profile");
-    } else {
-      navigate(`/profile/${userId}`);
-    }
-  };
-
   return (
     <div className="users-container">
       <h2>User List</h2>
@@ -65,11 +50,7 @@ export default function UsersPage() {
         {filteredUsers.length > 0 ? (
           filteredUsers.map((user) => (
             <li key={user._id} className="user-card">
-              <div
-                className="user-avatar"
-                onClick={() => handleUserClick(user._id)} 
-                style={{ cursor: "pointer" }}
-              >
+              <div className="user-avatar">
                 {user.icon ? (
                   <img src={user.icon} alt={`${user.name} avatar`} />
                 ) : (
@@ -78,13 +59,7 @@ export default function UsersPage() {
               </div>
 
               <div className="user-info">
-                <div
-                  className="user-name"
-                  onClick={() => handleUserClick(user._id)} 
-                  style={{ cursor: "pointer" }}
-                >
-                  {user.name}
-                </div>
+                <div className="user-name">{user.name}</div>
                 <div className="user-email">{user.email}</div>
 
                 <div className="user-meta">
